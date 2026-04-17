@@ -6,7 +6,7 @@
  *******************************************************************************************************************************************************************************************/
 
 //Criando cabeçalho padronizado para as devolutivas da API
-const defaultMessage = {
+const DEFAULT_MESSAGE = {
     api_description: "API para gerenciar o controle de filmes",
     development: "Lucas Dias Brandão Kolle",
     version: "1.0.04.26",
@@ -22,8 +22,16 @@ const ERROR_BAD_REQUEST = {
     message: "Os dados enviados na requisição não estão corretos!"
 }
 
+//Criando mensagens de sucesso da API
+const SUCESS_CHEATED_ITEM = {
+    status: true,
+    status_code: 201,
+    message: "Registro inserido com sucesso!"
+}
+
 //exportando as mensagens
 module.exports = {
-    defaultMessage,
-    ERROR_BAD_REQUEST
+    DEFAULT_MESSAGE,
+    ERROR_BAD_REQUEST,
+    SUCESS_CHEATED_ITEM
 }
