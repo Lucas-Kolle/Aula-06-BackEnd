@@ -36,6 +36,10 @@ const insertFilme = async function(filme){
         '${filme.capa}'
     );`
 
+    // CONFERINDO CHEGADA
+    // console.log("Conferindo o Script do Banco")
+    // console.log(sql)
+
     //executar o script sql no banco de dados (passa a variável que nós fizemos)
     let result = await knexConex.raw(sql) //await está dizendo para o javaScript aguardar a resposta
 

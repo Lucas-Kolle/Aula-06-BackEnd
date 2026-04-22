@@ -15,6 +15,10 @@ const filmeDAO = require("../../model/DAO/filme/filme.js")
 //função para inserir novo filme
 const inserirNovoFilme = async function(filme){
 
+    // CONFERINDO CHEGADA 
+    // console.log("Conferindo se chega 2 (controller)")
+    // console.log(filme)
+
     //clonando a variável de mensagens para não modificar a original
     let message = JSON.parse(JSON.stringify(config_message))
     //JSON.stringify(config_message) -> transforma o Json em string
@@ -24,16 +28,16 @@ const inserirNovoFilme = async function(filme){
     /* VALIDANDO DADOS QUE CHEGAM */
 
     // se o "filme.nome" (conteúdo do Json) vier vazio ou "null" ou undefined ou com mais caracteres do que é permitido (.lenght -> conta a quantidade de caracteres)
-    if(filme.nome == "" || filme.nome == null || filme.nome == undefined || filme.nome.lenght > 80){
+    if(filme.nome == "" || filme.nome == null || filme.nome == undefined || filme.nome.length > 80){
 
         //Criando um novo atributo no Json de mensagem para personalizar conforme o erro (NESSE CASO O ERRO É 400)
         message.ERROR_BAD_REQUETS.field = "[NOME] INVALIDO"
 
-    }else if(filme.data_lancamento == "" || filme.data_lancamento == null || filme.data_lancamento == undefined || filme.data_lancamento.lenght != 10){ // != -> diferente 
+    }else if(filme.data_lancamento == "" || filme.data_lancamento == null || filme.data_lancamento == undefined || filme.data_lancamento.length != 10){ // != -> diferente 
 
         message.ERROR_BAD_REQUETS.field = "[DATA_LANCAMENTO] INVALIDO"
 
-    }else if(filme.duracao == "" || filme.duracao == null || filme.duracao == undefined || filme.duracao.lenght < 5){
+    }else if(filme.duracao == "" || filme.duracao == null || filme.duracao == undefined || filme.duracao.length < 5){
 
         message.ERROR_BAD_REQUETS.field = "[DURACAO] INVALIDA"
 
@@ -41,11 +45,11 @@ const inserirNovoFilme = async function(filme){
 
         message.ERROR_BAD_REQUETS.field = "[SINOPSE] INVALIDA"
 
-    }else if(isNaN(filme.avaliacao) || filme.avaliacao.lenght > 3 ){ //isNaN -> se vier algo que não seja um número
+    }else if(isNaN(filme.avaliacao) || filme.avaliacao.length > 3 ){ //isNaN -> se vier algo que não seja um número
 
         message.ERROR_BAD_REQUETS.field = "[AVALIACAO] INVALIDA"
 
-    }else if(filme.valor == "" || filme.valor == null || filme.valor == undefined || filme.valor.lenght > 5 || isNaN(filme.valor)){
+    }else if(filme.valor == "" || filme.valor == null || filme.valor == undefined || filme.valor.length > 5 || isNaN(filme.valor)){
 
         message.ERROR_BAD_REQUETS.field = "[VALOR] INVALIDO"
 
@@ -54,6 +58,7 @@ const inserirNovoFilme = async function(filme){
         message.ERROR_BAD_REQUETS.field = "[CAPA] INVALIDO"
 
     //se tudo der certo ele vai cair aqui e mandar para pasta "model"
+    //encaminha os dados do filme para o DAO
     }else{
 
         //como nãou houveram erros, os dados do filme serão enviados para a fução "insertFilme" no arquivo "filme.js" dentro da pasta "model" (pasta que conversa com o banco de dados)

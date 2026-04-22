@@ -48,5 +48,6 @@ values(
 	'https://br.web.img3.acsta.net/c_310_420/img/5b/ea/5bea1aeac3323aeaaf82449a34fafbbf.jpg'
 );
 
+# Vizualizar conteúdos da tabela
 select * from tbl_filme;
 
