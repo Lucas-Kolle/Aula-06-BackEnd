@@ -13,7 +13,7 @@ const filmeDAO = require("../../model/DAO/filme/filme.js")
 
 
 //função para inserir novo filme
-const inserirNovoFilme = async function(filme){
+const inserirNovoFilme = async function(filme, contentType){
 
     // CONFERINDO CHEGADA 
     // console.log("Conferindo se chega 2 (controller)")
@@ -23,42 +23,52 @@ const inserirNovoFilme = async function(filme){
     let message = JSON.parse(JSON.stringify(config_message))
     //JSON.stringify(config_message) -> transforma o Json em string
     //JSON.parse -> transforma de volta em Json
- 
 
-    /* VALIDANDO DADOS QUE CHEGAM */
+    //Tratando tipo de dados recebidos, se não for um Json ele não processa e cai no else
+    if(String(contentType).toUpperCase() == "APPLICATION/JSON"){
 
-    let validar = await validarDados(filme)
+        /* VALIDANDO DADOS QUE CHEGAM */
 
-    //se a função validar retornar um mensagem de erro, ele retorna o erro
-    if(validar){
-        return validar
-    
-    //se tudo der certo ele vai cair aqui e mandar para pasta "model"
-    //encaminha os dados do filme para o DAO
-    }else{
+        let validar = await validarDados(filme)
 
-        //como nãou houveram erros, os dados do filme serão enviados para a fução "insertFilme" no arquivo "filme.js" dentro da pasta "model" (pasta que conversa com o banco de dados)
-        let result = await filmeDAO.insertFilme(filme) //await -> espere a resposta (conversa com o "async", sem o async não será possível usar o "await" ou seja, ela não espera a resposta)
-
-        //condicional de resposta do "insertFilme()" 
-
-        // se o recurso for inserido no banco e a função retornar "true" ela vai cair aqui
-        if(result){
-
-            message.DEFAULT_MESSAGE.status = message.SUCESS_CHEATED_ITEM.status //cria um atributo de status no cabeçalho "DEFAULT_MESSAGE" e atribui um valor predefinido no "SUCESS_CHEATED_ITEM"
-            message.DEFAULT_MESSAGE.status_code = message.SUCESS_CHEATED_ITEM.status_code
-            message.DEFAULT_MESSAGE.message = message.SUCESS_CHEATED_ITEM.message
-
-        //se o recurso não for inserido no banco e retornar um "false" ela vai cair aqui
+        //se a função validar retornar um mensagem de erro, ele retorna o erro
+        if(validar){
+            return validar
+        
+        //se tudo der certo ele vai cair aqui e mandar para pasta "model"
+        //encaminha os dados do filme para o DAO
         }else{
 
-            //retorna a mensagem de erro completa
-            message.ERROR_INTERNAL_SERVER_MODEL
+            //como nãou houveram erros, os dados do filme serão enviados para a fução "insertFilme" no arquivo "filme.js" dentro da pasta "model" (pasta que conversa com o banco de dados)
+            let result = await filmeDAO.insertFilme(filme) //await -> espere a resposta (conversa com o "async", sem o async não será possível usar o "await" ou seja, ela não espera a resposta)
+
+            //condicional de resposta do "insertFilme()" 
+
+            // se o recurso for inserido no banco e a função retornar "true" ela vai cair aqui
+            if(result){
+
+                message.DEFAULT_MESSAGE.status = message.SUCESS_CHEATED_ITEM.status //cria um atributo de status no cabeçalho "DEFAULT_MESSAGE" e atribui um valor predefinido no "SUCESS_CHEATED_ITEM"
+                message.DEFAULT_MESSAGE.status_code = message.SUCESS_CHEATED_ITEM.status_code
+                message.DEFAULT_MESSAGE.message = message.SUCESS_CHEATED_ITEM.message
+
+            //se o recurso não for inserido no banco e retornar um "false" ela vai cair aqui
+            }else{
+
+                //retorna a mensagem de erro completa
+                message.ERROR_INTERNAL_SERVER_MODEL
+
+            }
+
+            //retorna a mensagem completa, já personalizada de acordo com os erros apresentados em cada etapa
+            return message.DEFAULT_MESSAGE
 
         }
 
-        //retorna a mensagem completa, já personalizada de acordo com os erros apresentados em cada etapa
-        return message.DEFAULT_MESSAGE
+    //se o tipo de dados não for um Json, ele vai entrar aqui
+    }else{
+
+        //retorna a mensagem de erro personalizada
+        return message.ERROR_CONTENT_TYPE
 
     }
 }

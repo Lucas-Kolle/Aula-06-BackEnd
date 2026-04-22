@@ -46,11 +46,14 @@ app.post("/v1/senai/locadora/filme", bodyParserJSON, async function(request, res
     //recebe o conteúdo dentro do body da requisição
     let dados = request.body
 
+    //recebe o content type da requisição, para validar se é um JSON
+    let contentType = request.headers['content-type']
+
     // CONFERINDO CHEGADA
     // console.log("Conferindo se chega (APP)")
     // console.log(dados)
 
-    let result = await controllerFilme.inserirNovoFilme(dados) //chama a função inserir dados e passa a variável "dados"
+    let result = await controllerFilme.inserirNovoFilme(dados, contentType) //chama a função inserir dados e passa a variável "dados"
 
     //mandando as respostas
     response.status(result.status_code) //manda só o código do Json
