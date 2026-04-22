@@ -31,7 +31,7 @@ const insertFilme = async function(filme){
         '${filme.data_lancamento}',
         '${filme.duracao}',
         '${filme.sinopse}',
-        '${filme.avaliacao}',
+        if('${filme.avaliacao}' = "", null, '${filme.avaliacao}'),
         '${filme.valor}',
         '${filme.capa}'
     );`

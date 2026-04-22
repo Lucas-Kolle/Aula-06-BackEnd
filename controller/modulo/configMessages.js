@@ -22,6 +22,12 @@ const ERROR_BAD_REQUEST = {
     message: "Os dados enviados na requisição não estão corretos!"
 }
 
+const ERROR_INTERNAL_SERVER_MODEL = {
+    status: false,
+    status_code: 500,
+    message: "Não foi possível processar a requição por conta de erro na API (Erro da modelagem de dados MODEL)"
+}
+
 //Criando mensagens de sucesso da API
 const SUCESS_CHEATED_ITEM = {
     status: true,
@@ -33,5 +39,6 @@ const SUCESS_CHEATED_ITEM = {
 module.exports = {
     DEFAULT_MESSAGE,
     ERROR_BAD_REQUEST,
+    ERROR_INTERNAL_SERVER_MODEL,
     SUCESS_CHEATED_ITEM
 }

@@ -27,36 +27,12 @@ const inserirNovoFilme = async function(filme){
 
     /* VALIDANDO DADOS QUE CHEGAM */
 
-    // se o "filme.nome" (conteúdo do Json) vier vazio ou "null" ou undefined ou com mais caracteres do que é permitido (.lenght -> conta a quantidade de caracteres)
-    if(filme.nome == "" || filme.nome == null || filme.nome == undefined || filme.nome.length > 80){
+    let validar = await validarDados(filme)
 
-        //Criando um novo atributo no Json de mensagem para personalizar conforme o erro (NESSE CASO O ERRO É 400)
-        message.ERROR_BAD_REQUETS.field = "[NOME] INVALIDO"
-
-    }else if(filme.data_lancamento == "" || filme.data_lancamento == null || filme.data_lancamento == undefined || filme.data_lancamento.length != 10){ // != -> diferente 
-
-        message.ERROR_BAD_REQUETS.field = "[DATA_LANCAMENTO] INVALIDO"
-
-    }else if(filme.duracao == "" || filme.duracao == null || filme.duracao == undefined || filme.duracao.length < 5){
-
-        message.ERROR_BAD_REQUETS.field = "[DURACAO] INVALIDA"
-
-    }else if(filme.sinopse == "" || filme.sinopse == null || filme.sinopse == undefined){
-
-        message.ERROR_BAD_REQUETS.field = "[SINOPSE] INVALIDA"
-
-    }else if(isNaN(filme.avaliacao) || filme.avaliacao.length > 3 ){ //isNaN -> se vier algo que não seja um número
-
-        message.ERROR_BAD_REQUETS.field = "[AVALIACAO] INVALIDA"
-
-    }else if(filme.valor == "" || filme.valor == null || filme.valor == undefined || filme.valor.length > 5 || isNaN(filme.valor)){
-
-        message.ERROR_BAD_REQUETS.field = "[VALOR] INVALIDO"
-
-    }else if(filme.capa.lenght > 255){
-
-        message.ERROR_BAD_REQUETS.field = "[CAPA] INVALIDO"
-
+    //se a função validar retornar um mensagem de erro, ele retorna o erro
+    if(validar){
+        return validar
+    
     //se tudo der certo ele vai cair aqui e mandar para pasta "model"
     //encaminha os dados do filme para o DAO
     }else{
@@ -76,10 +52,8 @@ const inserirNovoFilme = async function(filme){
         //se o recurso não for inserido no banco e retornar um "false" ela vai cair aqui
         }else{
 
-            message.DEFAULT_MESSAGE.status = message.ERROR_BAD_REQUETS.status //cria um atributo de status no cabeçalho "DEFAULT_MESSAGE" e atribui um valor predefinido no "ERROR_BAD_REQUETS"
-            message.DEFAULT_MESSAGE.status_code = message.ERROR_BAD_REQUETS.status_code
-            message.DEFAULT_MESSAGE.message = message.ERROR_BAD_REQUETS.message //cria um atributo de message no cabeçalho "DEFAULT_MESSAGE" e atribui um valor predefinido no "ERROR_BAD_REQUETS"
-            message.DEFAULT_MESSAGE.field = message,ERROR_BAD_REQUETS.field //cria um atributo field no cabeçalho "DEFAULT_MESSAGE" e atribui u valor personalizado criado nos else if acima "ERROR_BAD_REQUETS"
+            //retorna a mensagem de erro completa
+            message.ERROR_INTERNAL_SERVER_MODEL
 
         }
 
@@ -107,6 +81,59 @@ const buscarFilmeID = async function(){
 //função para excluir um filme
 const excluirFilme = async function(){
     
+}
+
+//função para validar todos os dados de filmes (se é obrigatório, quantidade de letras, números e etc)
+const validarDados = async function(filme){
+
+    //clonando a variável de mensagens para não modificar a original
+    let message = JSON.parse(JSON.stringify(config_message))
+    //JSON.stringify(config_message) -> transforma o Json em string
+    //JSON.parse -> transforma de volta em Json
+
+
+    // se o "filme.nome" (conteúdo do Json) vier vazio ou "null" ou undefined ou com mais caracteres do que é permitido (.lenght -> conta a quantidade de caracteres)
+    if(filme.nome == "" || filme.nome == null || filme.nome == undefined || filme.nome.length > 80){
+
+        //Criando um novo atributo no Json de mensagem para personalizar conforme o erro (NESSE CASO O ERRO É 400)
+        message.ERROR_BAD_REQUEST.field = "[NOME] INVALIDO"
+        return message.ERROR_BAD_REQUEST
+
+    }else if(filme.data_lancamento == "" || filme.data_lancamento == null || filme.data_lancamento == undefined || filme.data_lancamento.length != 10){ // != -> diferente 
+
+        message.ERROR_BAD_REQUEST.field = "[DATA_LANCAMENTO] INVALIDO"
+        return message.ERROR_BAD_REQUEST
+
+    }else if(filme.duracao == "" || filme.duracao == null || filme.duracao == undefined || filme.duracao.length < 5){
+
+        message.ERROR_BAD_REQUEST.field = "[DURACAO] INVALIDA"
+        return message.ERROR_BAD_REQUEST
+
+    }else if(filme.sinopse == "" || filme.sinopse == null || filme.sinopse == undefined){
+
+        message.ERROR_BAD_REQUEST.field = "[SINOPSE] INVALIDA"
+        return message.ERROR_BAD_REQUEST
+
+    }else if(isNaN(filme.avaliacao) || filme.avaliacao.length > 3 ){ //isNaN -> se vier algo que não seja um número
+
+        message.ERROR_BAD_REQUEST.field = "[AVALIACAO] INVALIDA"
+        return message.ERROR_BAD_REQUEST
+
+    }else if(filme.valor == "" || filme.valor == null || filme.valor == undefined || filme.valor.length > 5 || isNaN(filme.valor)){
+
+        message.ERROR_BAD_REQUEST.field = "[VALOR] INVALIDO"
+        return message.ERROR_BAD_REQUEST
+
+    }else if(filme.capa.lenght > 255){
+
+        message.ERROR_BAD_REQUEST.field = "[CAPA] INVALIDO"
+        return message.ERROR_BAD_REQUEST
+
+    // se tudo estiver correto ele vai cair aqui
+    }else{
+        return false
+    }
+
 }
 
 //exportando as funções
