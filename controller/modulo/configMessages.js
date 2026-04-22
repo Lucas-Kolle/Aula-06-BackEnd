@@ -25,7 +25,13 @@ const ERROR_BAD_REQUEST = {
 const ERROR_INTERNAL_SERVER_MODEL = {
     status: false,
     status_code: 500,
-    message: "Não foi possível processar a requição por conta de erro na API (Erro da modelagem de dados MODEL)."
+    message: "Não foi possível processar a requição por conta de erro na API (Erro na modelagem de dados MODEL)."
+}
+
+const ERROR_INTERNAL_SERVER_CONTROLLER = {
+    status: false,
+    status_code: 500,
+    message: "Não foi possível processar a requição por conta de erro na API (Erro na CONTROLLER)."
 }
 
 const ERROR_CONTENT_TYPE = {
@@ -46,6 +52,7 @@ module.exports = {
     DEFAULT_MESSAGE,
     ERROR_BAD_REQUEST,
     ERROR_INTERNAL_SERVER_MODEL,
+    ERROR_INTERNAL_SERVER_CONTROLLER,
     ERROR_CONTENT_TYPE,
     SUCESS_CHEATED_ITEM
 }

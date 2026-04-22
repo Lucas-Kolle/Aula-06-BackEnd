@@ -24,52 +24,58 @@ const inserirNovoFilme = async function(filme, contentType){
     //JSON.stringify(config_message) -> transforma o Json em string
     //JSON.parse -> transforma de volta em Json
 
-    //Tratando tipo de dados recebidos, se não for um Json ele não processa e cai no else
-    if(String(contentType).toUpperCase() == "APPLICATION/JSON"){
-
-        /* VALIDANDO DADOS QUE CHEGAM */
-
-        let validar = await validarDados(filme)
-
-        //se a função validar retornar um mensagem de erro, ele retorna o erro
-        if(validar){
-            return validar
+    try {
         
-        //se tudo der certo ele vai cair aqui e mandar para pasta "model"
-        //encaminha os dados do filme para o DAO
-        }else{
+        //Tratando tipo de dados recebidos, se não for um Json ele não processa e cai no else
+        if(String(contentType).toUpperCase() == "APPLICATION/JSON"){
 
-            //como nãou houveram erros, os dados do filme serão enviados para a fução "insertFilme" no arquivo "filme.js" dentro da pasta "model" (pasta que conversa com o banco de dados)
-            let result = await filmeDAO.insertFilme(filme) //await -> espere a resposta (conversa com o "async", sem o async não será possível usar o "await" ou seja, ela não espera a resposta)
+            /* VALIDANDO DADOS QUE CHEGAM */
 
-            //condicional de resposta do "insertFilme()" 
+            let validar = await validarDados(filme)
 
-            // se o recurso for inserido no banco e a função retornar "true" ela vai cair aqui
-            if(result){
-
-                message.DEFAULT_MESSAGE.status = message.SUCESS_CHEATED_ITEM.status //cria um atributo de status no cabeçalho "DEFAULT_MESSAGE" e atribui um valor predefinido no "SUCESS_CHEATED_ITEM"
-                message.DEFAULT_MESSAGE.status_code = message.SUCESS_CHEATED_ITEM.status_code
-                message.DEFAULT_MESSAGE.message = message.SUCESS_CHEATED_ITEM.message
-
-            //se o recurso não for inserido no banco e retornar um "false" ela vai cair aqui
+            //se a função validar retornar um mensagem de erro, ele retorna o erro
+            if(validar){
+                return validar
+            
+            //se tudo der certo ele vai cair aqui e mandar para pasta "model"
+            //encaminha os dados do filme para o DAO
             }else{
 
-                //retorna a mensagem de erro completa
-                message.ERROR_INTERNAL_SERVER_MODEL
+                //como nãou houveram erros, os dados do filme serão enviados para a fução "insertFilme" no arquivo "filme.js" dentro da pasta "model" (pasta que conversa com o banco de dados)
+                let result = await filmeDAO.insertFilme(filme) //await -> espere a resposta (conversa com o "async", sem o async não será possível usar o "await" ou seja, ela não espera a resposta)
+
+                //condicional de resposta do "insertFilme()" 
+
+                // se o recurso for inserido no banco e a função retornar "true" ela vai cair aqui
+                if(result){
+
+                    message.DEFAULT_MESSAGE.status = message.SUCESS_CHEATED_ITEM.status //cria um atributo de status no cabeçalho "DEFAULT_MESSAGE" e atribui um valor predefinido no "SUCESS_CHEATED_ITEM"
+                    message.DEFAULT_MESSAGE.status_code = message.SUCESS_CHEATED_ITEM.status_code
+                    message.DEFAULT_MESSAGE.message = message.SUCESS_CHEATED_ITEM.message
+
+                //se o recurso não for inserido no banco e retornar um "false" ela vai cair aqui
+                }else{
+
+                    //retorna a mensagem de erro completa
+                    message.ERROR_INTERNAL_SERVER_MODEL
+
+                }
+
+                //retorna a mensagem completa, já personalizada de acordo com os erros apresentados em cada etapa
+                return message.DEFAULT_MESSAGE
 
             }
 
-            //retorna a mensagem completa, já personalizada de acordo com os erros apresentados em cada etapa
-            return message.DEFAULT_MESSAGE
+        //se o tipo de dados não for um Json, ele vai entrar aqui
+        }else{
+
+            //retorna a mensagem de erro personalizada
+            return message.ERROR_CONTENT_TYPE
 
         }
 
-    //se o tipo de dados não for um Json, ele vai entrar aqui
-    }else{
-
-        //retorna a mensagem de erro personalizada
-        return message.ERROR_CONTENT_TYPE
-
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 }
 
@@ -129,7 +135,7 @@ const validarDados = async function(filme){
         message.ERROR_BAD_REQUEST.field = "[AVALIACAO] INVALIDA"
         return message.ERROR_BAD_REQUEST
 
-    }else if(filme.valor == "" || filme.valor == null || filme.valor == undefined || filme.valor.length > 5 || isNaN(filme.valor)){
+    }else if(filme.valor == "" || filme.valor == null || filme.valor == undefined || filme.valor.split(".")[0].length > 3 || isNaN(filme.valor)){ //.split(".") -> Transforma o número em um ARRAY, permitindo contar a parte decimal separadamente 
 
         message.ERROR_BAD_REQUEST.field = "[VALOR] INVALIDO"
         return message.ERROR_BAD_REQUEST

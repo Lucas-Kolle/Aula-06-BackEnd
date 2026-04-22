@@ -16,37 +16,48 @@ const knexConex = knex(knexConfig.development)
 
 //função para inserir dados na tabela de filme
 const insertFilme = async function(filme){
-    let sql = //vai pegar o conteúdo do JSON "filme" pra criar um script
-    `insert into tbl_filme (
-	    nome, 
-	    data_lancamento, 
-	    duracao, 
-	    sinopse, 
-	    avaliacao, 
-	    valor, 
-	    capa
-    )
-    values(
-        '${filme.nome}',
-        '${filme.data_lancamento}',
-        '${filme.duracao}',
-        '${filme.sinopse}',
-        if('${filme.avaliacao}' = "", null, '${filme.avaliacao}'),
-        '${filme.valor}',
-        '${filme.capa}'
-    );`
 
-    // CONFERINDO CHEGADA
-    // console.log("Conferindo o Script do Banco")
-    // console.log(sql)
+    try {
+        
+        let sql = //vai pegar o conteúdo do JSON "filme" pra criar um script
+        `insert into tbl_filme (
+            nome, 
+            data_lancamento, 
+            duracao, 
+            sinopse, 
+            avaliacao, 
+            valor, 
+            capa
+        )
+        values(
+            '${filme.nome}',
+            '${filme.data_lancamento}',
+            '${filme.duracao}',
+            '${filme.sinopse}',
+            if('${filme.avaliacao}' = "", null, '${filme.avaliacao}'),
+            '${filme.valor}',
+            '${filme.capa}'
+        );`
 
-    //executar o script sql no banco de dados (passa a variável que nós fizemos)
-    let result = await knexConex.raw(sql) //await está dizendo para o javaScript aguardar a resposta
+        // CONFERINDO CHEGADA
+        // console.log("Conferindo o Script do Banco")
+        // console.log(sql)
 
-    if(result)
-        return true
-    else
+        //executar o script sql no banco de dados (passa a variável que nós fizemos)
+        let result = await knexConex.raw(sql) //await está dizendo para o javaScript aguardar a resposta
+
+        if(result)
+            return true
+        else
+            return false
+
+    //se der algum erro ele cai aqui e retorna falso, mas não derruba a API
+    } catch (error) {
+
+        //console.log(error) //serve para ver onde eu errei
         return false
+
+    }
 }
 
 //função para atualizar um filme existente na tabela
