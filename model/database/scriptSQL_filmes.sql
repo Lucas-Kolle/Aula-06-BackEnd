@@ -51,3 +51,9 @@ values(
 # Vizualizar conteúdos da tabela
 select * from tbl_filme;
 
+#Permite vizualizar o conteudo de uma tabela, ordenando pelo id decrescente
+select * from tbl_filme order by id desc;
+
+# Apagando todos os filmes com o id maior que zero
+delete from tbl_filme where id > 0;
+

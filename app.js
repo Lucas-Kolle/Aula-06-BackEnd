@@ -41,7 +41,9 @@ const corsOption = {
 app.use(cors(corsOption))
 
 //Criando os EndPoints
-app.post("/v1/senai/locadora/filme", bodyParserJSON, async function(request, response){ //colocar "async" pra ele poder conversar com o await / colocar o "bodyParserJSON" para deixar o formato como Json
+
+//cadastrar novo filme
+app.post("/v1/senai/locadora/filme", bodyParserJSON, async function(request, response){ //colocar "async" pra ele poder conversar com o await / colocar o "bodyParserJSON" para deixar o formato como Json do que foi recebido "dados do filme"
     
     //recebe o conteúdo dentro do body da requisição
     let dados = request.body
@@ -58,6 +60,31 @@ app.post("/v1/senai/locadora/filme", bodyParserJSON, async function(request, res
     //mandando as respostas
     response.status(result.status_code) //manda só o código do Json
     response.json(result) //manda o Json completo
+})
+
+//listar dados da tabela de filmes 
+app.get("/v1/senai/locadora/filme", async function(request, response){
+
+    //pede os dados para controller e aguarda a resposta
+    let result = await controllerFilme.listarFilmes()
+
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//buscar filme pelo id 
+app.get("/v1/senai/locadora/filme/:id", async function(request,response){ //o id deve ser enviado via parametro pois é uma PK, toda PK deve ser enviada via parametro
+
+    //recebendo o id
+    let id = request.params.id
+
+    //enviando para controller
+    let result = await controllerFilme.buscarFilmeID(id)
+
+    //não precisa tratar nada, pois a controller já tratou tudo
+
+    response.status(result.status_code)
+    response.json(result)
 })
 
 

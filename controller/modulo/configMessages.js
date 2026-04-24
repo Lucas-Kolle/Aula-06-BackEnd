@@ -40,11 +40,22 @@ const ERROR_CONTENT_TYPE = {
     message: "Não foi possível processar a requição pois o formato de dados aceito pela API é somente JSON."
 }
 
+const ERROR_NOT_FOUND = {
+    status: false,
+    status_code: 404,
+    message: "Não foi encontrado nenhum dado para retorno."
+}
+
 //Criando mensagens de sucesso da API
 const SUCESS_CHEATED_ITEM = {
     status: true,
     status_code: 201,
     message: "Registro inserido com sucesso!"
+}
+
+const SUCESS_RESPONSE = {
+    status: true,
+    status_code: 200
 }
 
 //exportando as mensagens
@@ -54,5 +65,7 @@ module.exports = {
     ERROR_INTERNAL_SERVER_MODEL,
     ERROR_INTERNAL_SERVER_CONTROLLER,
     ERROR_CONTENT_TYPE,
-    SUCESS_CHEATED_ITEM
+    ERROR_NOT_FOUND,
+    SUCESS_CHEATED_ITEM,
+    SUCESS_RESPONSE
 }

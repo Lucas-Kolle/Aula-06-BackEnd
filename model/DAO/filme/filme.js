@@ -68,10 +68,48 @@ const updateFilme = async function(filme){
 //função para retornar todos os dados da tabela de filme
 const selectAllFilme = async function(){
 
+    //colocando dentro do "try catch" para evitar que o programa feche em caso de erros
+    try {
+
+        //criando a variável que guarda o script do banco
+        let sql = "select * from tbl_filme order by id desc" //mostra todos os dados da tabela de filmes ordenando pelo id de forma decrescente
+
+        //executar o script sql no banco de dados (passa a variável que nós fizemos)
+        let result = await knexConex.raw(sql) //await está dizendo para o javaScript aguardar a resposta
+
+        //printando no terminal a resposta do banco (itens cadastrados na tabela de filmes)
+        // console.log(result)
+
+        //verificando se o retorno do banco é um ARRAy, se não for um ARRAY é porque deu errado
+        if(Array.isArray(result)){ //verifica se a variável "result" é um ARRAY
+            return result[0] //pedindo apenas o ARRAY de dados, removendo a descrição da estrutura da tabela
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
 }
 
 //função para retornar os dados do filme filtrando pelo id
 const selectByIdFilme = async function(id){
+
+    //colocando dentro do "try catch" para evitar que o programa feche em caso de erros
+    try {
+       
+        //criando o script para buscar no banco
+        let sql = `select * from tbl_filme where id=${id}` // buscar o filme pelo id
+
+        let result = await knexConex.raw(sql) //envia o comando pro banco e espera a resposta
+
+        if(Array.isArray(result)){
+            return result[0]
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
 
 }
 
