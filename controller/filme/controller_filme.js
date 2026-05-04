@@ -79,9 +79,53 @@ const inserirNovoFilme = async function(filme, contentType){
     }
 }
 
+//conteúdo do dia que eu faltei
 //função para atualizar um filme
 const atualizarFilme = async function(){
 
+    let customMessage = JSON.parse(JSON.stringify(configMessage))
+
+    try {
+        //Validação para verificar se o conteúdo do Body é um JSON
+        if (String(contentType).toUpperCase() == 'APPLICATION/JSON') {
+
+            //Chama a função para buscar o filme e validar se o ID está correto, 
+            //Se o ID existe no BD e se o FIlme existe
+            let resultBuscarFilme = await buscarFilme(id)
+
+            if (resultBuscarFilme.status) {
+                //Chamar a função para validar os dados para alteração filme (Body)
+                let validar = await validarDados(filme)
+                if (!validar) {
+                    //Adicionar um atributo ID no JSON de filme, para enviar ao DAO um único objeto
+                    filme.id = Number(id)
+
+                    //Chama a função para atualizar o filme no BD
+                    let result = await filmeDAO.updateFilme(filme)
+
+                    if (result) {
+                        customMessage.DEFAULT_MESSAGE.status = customMessage.SUCCESS_UPDATE_ITEM.status
+                        customMessage.DEFAULT_MESSAGE.status_code = customMessage.SUCCESS_UPDATE_ITEM.status_code
+                        customMessage.DEFAULT_MESSAGE.message = customMessage.SUCCESS_UPDATE_ITEM.message
+
+                        return customMessage.DEFAULT_MESSAGE //200
+                    } else {
+                        return customMessage.ERROR_INTERNAL_SERVER_MODEL //500 (MODELO)
+                    }
+                } else {
+                    return validar //400 de validação dos campos do banco de dados
+                }
+            } else {
+                return resultBuscarFilme //400(id inválido) ou 404(não encontrado) ou 500 (contraller e model)
+            }
+        } else {
+            return customMessage.ERROR_CONTENT_TYPE //415
+        }
+
+
+    } catch (error) {
+        return customMessage.ERROR_INTERNAL_SERVER_CONTROLLER //500 controller 
+    }
 }
 
 //função para retornar todos os filmes
@@ -167,9 +211,33 @@ const buscarFilmeID = async function(id){
     }
 }
 
+//conteúdo do dia que eu faltei
 //função para excluir um filme
 const excluirFilme = async function(){
     
+    let customMessage = JSON.parse(JSON.stringify(configMessage))
+
+    try {
+        let buscarFilmeResult = await buscarFilme(id)
+
+        if (buscarFilmeResult.status) {
+            let result = await filmeDAO.deleteFilme(id)
+
+            if (result) {
+                customMessage.DEFAULT_MESSAGE.status = customMessage.SUCCESS_DELETED_ITEM.status
+                customMessage.DEFAULT_MESSAGE.status_code = customMessage.SUCCESS_DELETED_ITEM.status_code
+                customMessage.DEFAULT_MESSAGE.message = customMessage.SUCCESS_DELETED_ITEM.message
+
+                return customMessage.DEFAULT_MESSAGE
+            } else {
+                return customMessage.ERROR_INTERNAL_SERVER_MODEL
+            }
+        } else {
+            return buscarFilmeResult
+        }
+    } catch (error) {
+        return customMessage.ERROR_INTERNAL_SERVER_CONTROLLER //500 
+    }
 }
 
 //função para validar todos os dados de filmes (se é obrigatório, quantidade de letras, números e etc)
@@ -230,4 +298,6 @@ module.exports = {
     inserirNovoFilme,
     listarFilmes,
     buscarFilmeID,
+    atualizarFilme,
+    excluirFilme
 }

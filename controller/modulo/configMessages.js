@@ -58,6 +58,19 @@ const SUCESS_RESPONSE = {
     status_code: 200
 }
 
+const SUCCESS_DELETED_ITEM = {
+    status: true,
+    status_code: 200,
+    message: "Item excluído com sucesso!"
+}
+
+const SUCCESS_UPDATE_ITEM = {
+    status: true,
+    status_code: 200,
+    message: "Item atualizado com sucesso"
+}
+
+
 //exportando as mensagens
 module.exports = {
     DEFAULT_MESSAGE,
@@ -67,5 +80,7 @@ module.exports = {
     ERROR_CONTENT_TYPE,
     ERROR_NOT_FOUND,
     SUCESS_CHEATED_ITEM,
-    SUCESS_RESPONSE
+    SUCESS_RESPONSE,
+    SUCCESS_DELETED_ITEM,
+    SUCCESS_UPDATE_ITEM
 }
