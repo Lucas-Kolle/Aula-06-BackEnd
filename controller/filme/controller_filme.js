@@ -47,11 +47,14 @@ const inserirNovoFilme = async function(filme, contentType){
                 //condicional de resposta do "insertFilme()" 
 
                 // se o recurso for inserido no banco e a função retornar "true" ela vai cair aqui
-                if(result){
+                if(result){ //201
+
+                    filme.id = result //criando o atributo ID no Json do filme e colocando o ID gerado no momento do insert
 
                     message.DEFAULT_MESSAGE.status = message.SUCESS_CHEATED_ITEM.status //cria um atributo de status no cabeçalho "DEFAULT_MESSAGE" e atribui um valor predefinido no "SUCESS_CHEATED_ITEM"
                     message.DEFAULT_MESSAGE.status_code = message.SUCESS_CHEATED_ITEM.status_code
                     message.DEFAULT_MESSAGE.message = message.SUCESS_CHEATED_ITEM.message
+                    message.DEFAULT_MESSAGE.response = filme //aparece os dados do filme do response para o usuário conferir
 
                 //se o recurso não for inserido no banco e retornar um "false" ela vai cair aqui
                 }else{
@@ -110,6 +113,7 @@ const atualizarFilme = async function(filme, id, contentType){
                         message.DEFAULT_MESSAGE.status = message.SUCCESS_UPDATE_ITEM.status
                         message.DEFAULT_MESSAGE.status_code = message.SUCCESS_UPDATE_ITEM.status_code
                         message.DEFAULT_MESSAGE.message = message.SUCCESS_UPDATE_ITEM.message
+                        message.DEFAULT_MESSAGE.response = filme //envia os dados do filme no response, para o usuário visualizar
 
                         return message.DEFAULT_MESSAGE //200
                     } else {
