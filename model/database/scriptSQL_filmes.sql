@@ -19,15 +19,6 @@ create table tbl_filme (
     capa 			varchar(255)
 );
 
-#Vizualizar tabelas
-show tables;
-
-#Vizualizar a descrição da tabela
-desc tbl_filme;
-
-#Excluir tabela
-drop table tbl_filme;
-
 #Inserir dados
 insert into tbl_filme (
 	nome, 
@@ -48,12 +39,103 @@ values(
 	'https://br.web.img3.acsta.net/c_310_420/img/5b/ea/5bea1aeac3323aeaaf82449a34fafbbf.jpg'
 );
 
+#criando tabela de genero
+create table tbl_genero (
+	id		int not null primary key auto_increment,
+    genero	varchar(30) not null
+);
+
+#Inserindo dados na tabela de genero
+insert into tbl_genero (
+	genero
+)
+values (
+	"Romance"
+);
+
+#Criando tabela de diretor
+create table tbl_diretor (
+	id					int not null primary key auto_increment,
+    nome				varchar(90) not null,
+    nacionalidade		varchar(30) not null,
+    data_nascimento		date not null,
+    biografia			text
+);
+
+#Inserindo dados
+insert into tbl_diretor (
+	nome,
+    nacionalidade,
+    data_nascimento,
+    biografia
+)
+values(
+	"José",
+    "Brasileiro",
+    "2023-01-22",
+    "asdasdasdasfafasdasasd"
+);
+
+#Criando tabela de classificacao
+create table tbl_classificacao (
+	id				int not null primary key auto_increment,
+    sigla			varchar(4) not null,
+    classificacao	varchar(50) not null,
+    descricao		varchar(70) not null
+);
+
+#Inserindo valores
+insert into tbl_classificacao (
+	sigla,
+    classificacao,
+    descricao
+)
+values (
+	"14",
+    "Não Recomendado para menores de 14 anos",
+    "askdhakjsfhakdhaskjdhasjdhkjashdkbjshadj"
+);
+
+#Criando tabela de ator
+create table tbl_ator (
+	id				int not null primary key auto_increment,
+    nome			varchar(90)	not null,
+    nacionalidade	varchar(30) not null,
+    data_nascimento	date not null,
+    biografia		text
+);
+
+#Adicionando dados
+insert into tbl_ator (
+	nome,
+    nacionalidade,
+    data_nascimento,
+    biografia
+)
+values (
+	"Marcel",
+    "Tailandes",
+    "1998-09-13",
+    "asdljafjrirjfkjdlkasnkcndkslkdjfirirjkdjaeasnaskln"
+);
+
+#Vizualizar tabelas
+show tables;
+
+#Vizualizar a descrição da tabela
+desc tbl_classificacao;
+
+#Excluir tabela
+drop table tbl_filme;
+
 # Vizualizar conteúdos da tabela
-select * from tbl_filme;
+select * from tbl_ator;
 
 #Permite vizualizar o conteudo de uma tabela, ordenando pelo id decrescente
 select * from tbl_filme order by id desc;
 
 # Apagando todos os filmes com o id maior que zero
 delete from tbl_filme where id > 0;
+
+
 
