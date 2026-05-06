@@ -88,6 +88,7 @@ app.get("/v1/senai/locadora/filme/:id", async function(request,response){ //o id
 })
 
 //conteúdo do dia que eu faltei (daqui até o "delete")
+//atualizar filme pelo id
 app.put('/v1/senai/locadora/filme/:id', bodyParserJSON, async function (request, response) {
     //Recebe o content-type da requisição, para voltar se é JSON
     let contentType = request.headers['content-type']
@@ -104,6 +105,7 @@ app.put('/v1/senai/locadora/filme/:id', bodyParserJSON, async function (request,
     response.json(result)
 })
 
+//deletar filme pelo id
 app.delete('/v1/senai/locadora/filme/:id', async function (request, response){
     let id = request.params.id
     let result = await controllerFilme.excluirFilme(id)

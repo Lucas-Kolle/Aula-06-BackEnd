@@ -75,7 +75,7 @@ const updateFilme = async function(filme){
             avaliacao       =  if('${filme.avaliacao}' = '', null, '${filme.avaliacao}')
         where id  = ${filme.id}`
 
-        let result = await knexConection.raw(sql)
+        let result = await knexConex.raw(sql)
 
         if (result)
             return true
@@ -140,9 +140,9 @@ const selectByIdFilme = async function(id){
 const deleteFilme = async function(id){
 
     try {
-        let sql = `delete from tbl_filme where id = ${id};`
+        let sql = `delete from tbl_filme where id = ${id};` //deletando apenas 
 
-        let result = await knexConection.raw(sql)
+        let result = await knexConex.raw(sql)
 
         if (result) {
             return true

@@ -81,9 +81,12 @@ const inserirNovoFilme = async function(filme, contentType){
 
 //conteúdo do dia que eu faltei
 //função para atualizar um filme
-const atualizarFilme = async function(){
+const atualizarFilme = async function(filme, id, contentType){
 
-    let customMessage = JSON.parse(JSON.stringify(configMessage))
+        //clonando a variável de mensagens para não modificar a original
+        let message = JSON.parse(JSON.stringify(config_message))
+        //JSON.stringify(config_message) -> transforma o Json em string
+        //JSON.parse -> transforma de volta em Json
 
     try {
         //Validação para verificar se o conteúdo do Body é um JSON
@@ -91,7 +94,7 @@ const atualizarFilme = async function(){
 
             //Chama a função para buscar o filme e validar se o ID está correto, 
             //Se o ID existe no BD e se o FIlme existe
-            let resultBuscarFilme = await buscarFilme(id)
+            let resultBuscarFilme = await buscarFilmeID(id)
 
             if (resultBuscarFilme.status) {
                 //Chamar a função para validar os dados para alteração filme (Body)
@@ -104,13 +107,13 @@ const atualizarFilme = async function(){
                     let result = await filmeDAO.updateFilme(filme)
 
                     if (result) {
-                        customMessage.DEFAULT_MESSAGE.status = customMessage.SUCCESS_UPDATE_ITEM.status
-                        customMessage.DEFAULT_MESSAGE.status_code = customMessage.SUCCESS_UPDATE_ITEM.status_code
-                        customMessage.DEFAULT_MESSAGE.message = customMessage.SUCCESS_UPDATE_ITEM.message
+                        message.DEFAULT_MESSAGE.status = message.SUCCESS_UPDATE_ITEM.status
+                        message.DEFAULT_MESSAGE.status_code = message.SUCCESS_UPDATE_ITEM.status_code
+                        message.DEFAULT_MESSAGE.message = message.SUCCESS_UPDATE_ITEM.message
 
-                        return customMessage.DEFAULT_MESSAGE //200
+                        return message.DEFAULT_MESSAGE //200
                     } else {
-                        return customMessage.ERROR_INTERNAL_SERVER_MODEL //500 (MODELO)
+                        return message.ERROR_INTERNAL_SERVER_MODEL //500 (MODELO)
                     }
                 } else {
                     return validar //400 de validação dos campos do banco de dados
@@ -119,12 +122,12 @@ const atualizarFilme = async function(){
                 return resultBuscarFilme //400(id inválido) ou 404(não encontrado) ou 500 (contraller e model)
             }
         } else {
-            return customMessage.ERROR_CONTENT_TYPE //415
+            return message.ERROR_CONTENT_TYPE //415
         }
 
 
     } catch (error) {
-        return customMessage.ERROR_INTERNAL_SERVER_CONTROLLER //500 controller 
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER //500 controller 
     }
 }
 
@@ -177,7 +180,7 @@ const buscarFilmeID = async function(id){
 
     try {
         //tratando o id, para não mandar conteúdos errados pro banco
-        if(id == "" || id == null || id == undefined || isNaN(id)){
+        if(id == undefined || id == "" || id == null || isNaN(id)){
             message.ERROR_BAD_REQUEST.field = "[ID] INVÁLIDO"
             return message.ERROR_BAD_REQUEST //400
         
@@ -213,30 +216,32 @@ const buscarFilmeID = async function(id){
 
 //conteúdo do dia que eu faltei
 //função para excluir um filme
-const excluirFilme = async function(){
+const excluirFilme = async function(id){
     
-    let customMessage = JSON.parse(JSON.stringify(configMessage))
+    //clonando a variável de mensagens para não modificar a original
+    let message = JSON.parse(JSON.stringify(config_message))
+    //JSON.stringify(config_message) -> transforma o Json em string
+    //JSON.parse -> transforma de volta em Json
 
     try {
-        let buscarFilmeResult = await buscarFilme(id)
+        //validação do erro 400 e 404
+        let resultBuscarID = await buscarFilmeID(id)
 
-        if (buscarFilmeResult.status) {
+        //se o status for verdadeiro ele continua
+        if(resultBuscarID.status){
+            //chamar a função do DAO para excluir o filme
             let result = await filmeDAO.deleteFilme(id)
 
-            if (result) {
-                customMessage.DEFAULT_MESSAGE.status = customMessage.SUCCESS_DELETED_ITEM.status
-                customMessage.DEFAULT_MESSAGE.status_code = customMessage.SUCCESS_DELETED_ITEM.status_code
-                customMessage.DEFAULT_MESSAGE.message = customMessage.SUCCESS_DELETED_ITEM.message
-
-                return customMessage.DEFAULT_MESSAGE
-            } else {
-                return customMessage.ERROR_INTERNAL_SERVER_MODEL
+            if(result){
+                return message.SUCCESS_DELETED_ITEM //200 registro excluido
+            }else{
+                return message.ERROR_INTERNAL_SERVER_MODEL //500 (model)
             }
-        } else {
-            return buscarFilmeResult
+        }else{
+            return resultBuscarID //400 ou 404
         }
     } catch (error) {
-        return customMessage.ERROR_INTERNAL_SERVER_CONTROLLER //500 
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER //500 
     }
 }
 
@@ -250,23 +255,23 @@ const validarDados = async function(filme){
 
 
     // se o "filme.nome" (conteúdo do Json) vier vazio ou "null" ou undefined ou com mais caracteres do que é permitido (.lenght -> conta a quantidade de caracteres)
-    if(filme.nome == "" || filme.nome == null || filme.nome == undefined || filme.nome.length > 80){
+    if(filme.nome == undefined || filme.nome == "" || filme.nome == null || filme.nome.length > 80){
 
         //Criando um novo atributo no Json de mensagem para personalizar conforme o erro (NESSE CASO O ERRO É 400)
         message.ERROR_BAD_REQUEST.field = "[NOME] INVALIDO"
         return message.ERROR_BAD_REQUEST
 
-    }else if(filme.data_lancamento == "" || filme.data_lancamento == null || filme.data_lancamento == undefined || filme.data_lancamento.length != 10){ // != -> diferente 
+    }else if(filme.data_lancamento == undefined || filme.data_lancamento == "" || filme.data_lancamento == null || filme.data_lancamento.length != 10){ // != -> diferente 
 
         message.ERROR_BAD_REQUEST.field = "[DATA_LANCAMENTO] INVALIDO"
         return message.ERROR_BAD_REQUEST
 
-    }else if(filme.duracao == "" || filme.duracao == null || filme.duracao == undefined || filme.duracao.length < 5){
+    }else if(filme.duracao == undefined || filme.duracao == "" || filme.duracao == null || filme.duracao.length < 5){
 
         message.ERROR_BAD_REQUEST.field = "[DURACAO] INVALIDA"
         return message.ERROR_BAD_REQUEST
 
-    }else if(filme.sinopse == "" || filme.sinopse == null || filme.sinopse == undefined){
+    }else if(filme.sinopse == undefined || filme.sinopse == "" || filme.sinopse == null){
 
         message.ERROR_BAD_REQUEST.field = "[SINOPSE] INVALIDA"
         return message.ERROR_BAD_REQUEST
@@ -276,7 +281,7 @@ const validarDados = async function(filme){
         message.ERROR_BAD_REQUEST.field = "[AVALIACAO] INVALIDA"
         return message.ERROR_BAD_REQUEST
 
-    }else if(filme.valor == "" || filme.valor == null || filme.valor == undefined || filme.valor.split(".")[0].length > 3 || isNaN(filme.valor)){ //.split(".") -> Transforma o número em um ARRAY, permitindo contar a parte decimal separadamente 
+    }else if(filme.valor == undefined || filme.valor == "" || filme.valor == null || filme.valor.split(".")[0].length > 3 || isNaN(filme.valor)){ //.split(".") -> Transforma o número em um ARRAY, permitindo contar a parte decimal separadamente 
 
         message.ERROR_BAD_REQUEST.field = "[VALOR] INVALIDO"
         return message.ERROR_BAD_REQUEST
