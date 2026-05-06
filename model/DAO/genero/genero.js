@@ -19,6 +19,29 @@ const knexConex = knex(knexConfig.development) //aciona o knex e passa as config
 //função para inserir generos
 const insertGenero = async function(genero){
 
+    //try catch para segurar a API no ar mesmo com erros
+    try {
+        
+        //criando a variável responsável por construir o script para enviar ao banco de dados
+        let sql = 
+            `insert into tbl_genero (
+	            genero
+            )
+            values (
+	            '${genero.genero}'
+            );`
+
+        //executa o script no banco de dados usando a nossa variável
+        let result = await knexConex.raw(sql) //usa o knexConex para enviar o script
+
+        if(result)
+            return result[0].insertId //retorna o ID do genero criado ao invés de retorna "true"
+        else
+            return false
+        
+    } catch (error) {
+        return false
+    }
 }
 
 //função para atualizar um genero
