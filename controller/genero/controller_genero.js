@@ -16,6 +16,53 @@ const generoDAO = require("../../model/DAO/genero/genero.js")
 //função para inserir um genero novo
 const inserirNovoGenero = async function(genero, contentType){
 
+    //importando arquivo de mensagens 
+    const message = JSON.parse(JSON.stringify(config_message)) //primeiro transforma em ele transformar em string para poder copiar, depois ele tranforma em json para ser utilizavel
+
+    try {
+
+        //tratando o tipo de dados recebido (SÓ ACEITAMOS JSON)
+        if(String(contentType).toUpperCase() == "APPLICATION/JSON"){ //se o content-type (informação presente no headers da requisição) não for um json ele cai no else
+
+            //enviado dados para a função validar
+            let validar = await validarDados(genero)
+
+            //tratando retorno da validação
+            if(validar){ //se a função validarDados() retornar a mensagem de erro ele envia para o app
+
+                return validar // 400 (O retorno da função já é uma mensagem de erro)
+
+            //se os dados estiverem corretos ele envia para o DAO 
+            }else{
+                
+                //enviando dados para o DAO (mandar pro banco de dados)
+                let result = await generoDAO.insertGenero(genero)
+
+                //validando retorno da função insertGenero()
+                if(result){ //se o item for cadastrado corretamente ele envia uma mensagem de sucesso
+
+                    genero.id = result //pegando o id do genero cadastrado e adicionando no JSON de genero
+
+                    message.DEFAULT_MESSAGE.status = message.SUCESS_CHEATED_ITEM.status //cria um atributo de status no cabeçalho "DEFAULT_MESSAGE" e atribui um valor predefinido no "SUCESS_CHEATED_ITEM"
+                    message.DEFAULT_MESSAGE.status_code = message.SUCESS_CHEATED_ITEM.status_code
+                    message.DEFAULT_MESSAGE.message = message.SUCESS_CHEATED_ITEM.message
+                    message.DEFAULT_MESSAGE.response = genero //aparece os dados do genero do response para o usuário conferir
+
+                //se a função retornar um "false" (o genero não foi cadastrado) ele cai aqui
+                }else{
+                    return message.ERROR_INTERNAL_SERVER_MODEL //500 (model) item não cadastrado
+                }
+
+                return message.DEFAULT_MESSAGE //201 MENSAGEM DE SUCESSO NO CADASTRO
+            }
+        
+        }else{
+            return message.ERROR_CONTENT_TYPE //415 (retorna erro de tipo de dados) 
+        }
+        
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER //500 (controller)
+    }
 }
 
 //função para atualizar um genero
@@ -58,7 +105,7 @@ const validarDados = function(genero){
         }else{
             return false
         }
-        
+
     } catch (error) {
         return false
     }
