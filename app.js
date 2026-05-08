@@ -116,7 +116,7 @@ app.delete('/v1/senai/locadora/filme/:id', async function (request, response){
 })
 
 //função para cadastrar novo genero
-app.post("/v1/senai/locadora/filme", bodyParserJSON /*serve para captar o conteúdo enviado na requisição e colocar*/, async function(request, response){
+app.post("/v1/senai/locadora/genero", bodyParserJSON /*serve para captar o conteúdo enviado na requisição e colocar*/, async function(request, response){
     
     //recebendo dados da requisição
     let dados = request.body
@@ -125,13 +125,12 @@ app.post("/v1/senai/locadora/filme", bodyParserJSON /*serve para captar o conte�
     let contentType = request.headers["content-type"]
 
     //enviando para a controller
-    let result = controllerGenero.inserirNovoGenero(dados, contentType)
+    let result = await controllerGenero.inserirNovoGenero(dados, contentType)
 
     //enviando resposta da requisição
     response.status(result.status_code)
     response.json(result)
 })
-
 
 
 //iniciando uma API para receber requisições

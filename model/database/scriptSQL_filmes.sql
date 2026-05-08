@@ -129,7 +129,7 @@ desc tbl_classificacao;
 drop table tbl_filme;
 
 # Vizualizar conteúdos da tabela
-select * from tbl_ator;
+select * from tbl_genero;
 
 #Permite vizualizar o conteudo de uma tabela, ordenando pelo id decrescente
 select * from tbl_filme order by id desc;
