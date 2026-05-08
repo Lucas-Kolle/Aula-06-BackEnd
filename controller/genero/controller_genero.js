@@ -73,6 +73,42 @@ const atualizarGenero = async function(genero, contentType, id){
 //função para listar todos os generos
 const listarGeneros = async function(){
 
+    //importando arquivo de mensagens
+    let message = JSON.parse(JSON.stringify(config_message)) //primeiro transforma em ele transformar em string para poder copiar, depois ele tranforma em json para ser utilizavel
+
+    try {
+
+        //chamando a função para enviar os dados
+        let result = await generoDAO.selectAllGenero()
+        console.log(result)
+
+        //verificando retorno 
+        if(result){
+
+            //verificando tamanho do array
+            if(result.length > 0){
+
+                //personalizando mensagem de sucesso
+                message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status // True or False
+                message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code // 200
+                message.DEFAULT_MESSAGE.response.count = result.length // Mostra a quantidade de itens
+                message.DEFAULT_MESSAGE.response.genero = result // Mostra os itens
+
+                return message.DEFAULT_MESSAGE // retorna as mensagens e os dados
+
+            //se estiver vazio ele cai aqui 
+            }else{
+                return message.ERROR_NOT_FOUND //404 (não encontrado)
+            }
+
+        }else{
+            return config_message.ERROR_INTERNAL_SERVER_MODEL // 500 (model)
+        }
+        
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500 (controller)
+    }
+
 }
 
 //função para buscar um genero pelo id

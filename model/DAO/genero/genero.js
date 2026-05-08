@@ -52,6 +52,27 @@ const updateGenero = async function(genero){
 //função para retornar todos os filmes
 const selectAllGenero = async function(){
 
+    try {
+
+        //criando variável sql para guardar o script
+        let sql = "select * from tbl_genero order by id desc;" //colocando em ordem decrescente para facilitar o entendimento
+
+        //executando no banco de dados
+        let result = await knexConex.raw(sql) //usa o knexConex para enviar o script
+
+        //verificando retorno do banco de dados
+        if(Array.isArray(result)){ //se o banco retornar um array ele cai aqui
+
+            return result[0] //retornando apenas o conteúdo que pedimos, sem os adicionais de descrição da tabela
+        
+        //se o retorno estiver vazio ele vai cair aqui
+        }else{
+            return false
+        }
+        
+    } catch (error) {
+        return false
+    }
 }
 
 //função para retornar um genero de acordo com o id

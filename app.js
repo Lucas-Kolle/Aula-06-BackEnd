@@ -132,6 +132,17 @@ app.post("/v1/senai/locadora/genero", bodyParserJSON /*serve para captar o conte
     response.json(result)
 })
 
+//função para listar todos os dados ddo genero
+app.get("/v1/senai/locadora/genero", async function(request, response){
+
+    //pede os dados e aguarda a resposta
+    let result = await controllerGenero.listarGeneros()
+
+    //envia os dados recebidos
+    response.status(result.status_code)
+    response.json(result)
+})
+
 
 //iniciando uma API para receber requisições
 app.listen(8080, function(){ //decidindo a porta para saída do conteúdo

@@ -53,6 +53,11 @@ values (
 	"Romance"
 );
 
+#Atualizando dados da tabela de genero
+update tbl_genero set 
+	genero = "Drama Teste 3"
+where id = 12;
+
 #Criando tabela de diretor
 create table tbl_diretor (
 	id					int not null primary key auto_increment,
