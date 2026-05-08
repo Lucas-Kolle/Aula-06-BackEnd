@@ -22,7 +22,8 @@ const cors          = require("cors")
 const bodyParser    = require("body-parser")
 
 //import das controllers do projeto
-const controllerFilme = require("./controller/filme/controller_filme.js")
+const controllerFilme   = require("./controller/filme/controller_filme.js")
+const controllerGenero  = require("./controller/genero/controller_genero.js")
 
 //criando um objeto para manipular dados do body da API em formato Json
 const bodyParserJSON = bodyParser.json()
@@ -89,7 +90,7 @@ app.get("/v1/senai/locadora/filme/:id", async function(request,response){ //o id
 
 //conteúdo do dia que eu faltei (daqui até o "delete")
 //atualizar filme pelo id
-app.put('/v1/senai/locadora/filme/:id', bodyParserJSON, async function (request, response) {
+app.put('/v1/senai/locadora/filme/:id', bodyParserJSON, async function (request, response){
     //Recebe o content-type da requisição, para voltar se é JSON
     let contentType = request.headers['content-type']
     //Recebe o ID do registro a ser atualizado
@@ -110,6 +111,23 @@ app.delete('/v1/senai/locadora/filme/:id', async function (request, response){
     let id = request.params.id
     let result = await controllerFilme.excluirFilme(id)
 
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//função para cadastrar novo genero
+app.post("/v1/senai/locadora/filme", bodyParserJSON /*serve para captar o conteúdo enviado na requisição e colocar*/, async function(request, response){
+    
+    //recebendo dados da requisição
+    let dados = request.body
+
+    //verificando content-type
+    let contentType = request.headers["content-type"]
+
+    //enviando para a controller
+    let result = controllerGenero.inserirNovoGenero(dados, contentType)
+
+    //enviando resposta da requisição
     response.status(result.status_code)
     response.json(result)
 })
