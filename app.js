@@ -115,7 +115,7 @@ app.delete('/v1/senai/locadora/filme/:id', async function (request, response){
     response.json(result)
 })
 
-//função para cadastrar novo genero
+//cadastrar novo genero
 app.post("/v1/senai/locadora/genero", bodyParserJSON /*serve para captar o conteúdo enviado na requisição e colocar*/, async function(request, response){
     
     //recebendo dados da requisição
@@ -132,13 +132,27 @@ app.post("/v1/senai/locadora/genero", bodyParserJSON /*serve para captar o conte
     response.json(result)
 })
 
-//função para listar todos os dados ddo genero
+//listar todos os dados ddo genero
 app.get("/v1/senai/locadora/genero", async function(request, response){
 
     //pede os dados e aguarda a resposta
     let result = await controllerGenero.listarGeneros()
 
     //envia os dados recebidos
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//buscar genero pelo id
+app.get("/v1/senai/locadora/genero/:id", async function(request, response){
+
+    //recebendo id
+    let id = request.params.id
+
+    //chamando função da controller e enviando o id
+    let result = await controllerGenero.buscarGeneroID(id)
+
+    //enviando resposta
     response.status(result.status_code)
     response.json(result)
 })

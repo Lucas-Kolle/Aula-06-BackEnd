@@ -114,6 +114,45 @@ const listarGeneros = async function(){
 //função para buscar um genero pelo id
 const buscarGeneroID = async function(id){
 
+    //importando o arquivo de mensagens
+    const message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+        
+        //validando id
+        if(id == undefined || id == "" || id == null || isNaN(id)){ //se o id estiver erra ele vai entrar aqui
+
+            //personalizando mensagem
+            message.ERROR_BAD_REQUEST.field = "O campo [ID] está incorreto!"
+            return message.ERROR_BAD_REQUEST //400 (requisição incorreta)
+
+        }else{ //se estiver tudo certo com o id ele continua o programa
+
+            //enviando para o DAO
+            let result = await generoDAO.selectByIdGenero(id)
+
+            //vaidando retorno
+            if(result){ //se tiver algo ele cai aqui
+
+                //conferindo tamanho do array de retorno
+                if(result.length > 0){ //se estiver conteúdo no array ele cai aqui
+
+                    message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status //true / false
+                    message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code //200
+                    message.DEFAULT_MESSAGE.response.genero = result //conteúdo
+
+                    return message.DEFAULT_MESSAGE //retornando dados
+
+                }else{ //se estiver vazio ele cai aqui
+                    return message.ERROR_NOT_FOUND //404 não encontrado
+                }
+            }else{ //se não tiver nada ele cai aqui
+                return message.ERROR_INTERNAL_SERVER_MODEL //500 (model) erro no banco 
+            }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500 (controler)
+    }
 }
 
 //função para excluir um genero pelo id

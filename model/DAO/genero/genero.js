@@ -78,6 +78,25 @@ const selectAllGenero = async function(){
 //função para retornar um genero de acordo com o id
 const selectByIdGenero = async function(id){
 
+    try {
+        
+        //criando variável sql
+        let sql = `select * from tbl_genero where id = ${id}`
+
+        //executando no banco de dados
+        let result = await knexConex.raw(sql)
+
+        //validando retorno
+        if(Array.isArray(result)){ //vendo se é um array
+
+            return result[0] //retornando somente o que nós pedimos, sem expecificações da tabela
+        //se não for array ele cai aqui
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
 }
 
 //função para deletar um filme pelo id
