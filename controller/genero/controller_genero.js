@@ -80,7 +80,6 @@ const listarGeneros = async function(){
 
         //chamando a função para enviar os dados
         let result = await generoDAO.selectAllGenero()
-        console.log(result)
 
         //verificando retorno 
         if(result){

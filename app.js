@@ -132,7 +132,7 @@ app.post("/v1/senai/locadora/genero", bodyParserJSON /*serve para captar o conte
     response.json(result)
 })
 
-//listar todos os dados ddo genero
+//listar todos os dados do genero
 app.get("/v1/senai/locadora/genero", async function(request, response){
 
     //pede os dados e aguarda a resposta
