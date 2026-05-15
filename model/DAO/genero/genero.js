@@ -47,6 +47,26 @@ const insertGenero = async function(genero){
 //função para atualizar um genero
 const updateGenero = async function(genero){
 
+    try {
+
+        //criando variável sql
+        let sql =   `update tbl_genero set 
+	                    genero = "${genero.genero}"
+                    where id = ${genero.id};`
+
+        //enviando para o banco de dados 
+        let result = await knexConex.raw(sql)
+
+        //validando retornos
+        if(result){
+            return true
+        }else{
+            return false
+        }
+        
+    } catch (error) {
+        return false
+    }
 }
 
 //função para retornar todos os filmes

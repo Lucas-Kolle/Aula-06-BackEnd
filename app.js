@@ -157,6 +157,22 @@ app.get("/v1/senai/locadora/genero/:id", async function(request, response){
     response.json(result)
 })
 
+//atualizar gênero
+app.put("/v1/senai/locadora/genero/:id", bodyParserJSON, async function(request, response){
+
+    //recebendo o id e o conteúdo para serem enviados
+    let id = request.params.id
+    let genero = request.body
+    let contentType = request.headers['content-type']
+
+    //enviando os dados para controller
+    let result = await controllerGenero.atualizarGenero(genero, contentType, id)
+
+    //enviando para o usuário
+    response.status(result.status_code)
+    response.json(result)
+})
+
 
 //iniciando uma API para receber requisições
 app.listen(8080, function(){ //decidindo a porta para saída do conteúdo

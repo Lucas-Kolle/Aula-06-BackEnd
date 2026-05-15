@@ -68,6 +68,62 @@ const inserirNovoGenero = async function(genero, contentType){
 //função para atualizar um genero
 const atualizarGenero = async function(genero, contentType, id){
 
+    //importando mensagens
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+
+        //validando tipo de dados para saber se é um json
+        if(String(contentType).toUpperCase() == "APPLICATION/JSON"){
+
+            //validando id e existencia do conteúdo no banco de dados
+            let validandoId = await buscarGeneroID(id)
+
+            //validando retorno da função de buscarGenero
+            if(validandoId.status){ //vai olhar o status (true / false) da função
+
+                //enviando dados do genero para a função de validação
+                let validarDadosGenero = await validarDados(genero)
+
+                //validaddo retorno da função
+                if(!validarDadosGenero){
+
+                    //adicionando o id no objeto "genero" recebido na requisição, para enviar tudo em um único objeto
+                    genero.id = Number(id)
+
+                    //enviando para para o DAO 
+                    let result = await generoDAO.updateGenero(genero)
+
+                    //tratando retorno do DAO
+                    if(result){
+
+                        //montando o cabeçalho de resposta, pois a requisição não pede nada pro banco
+                        message.DEFAULT_MESSAGE.status = message.SUCCESS_UPDATE_ITEM.status
+                        message.DEFAULT_MESSAGE.status_code = message.SUCCESS_UPDATE_ITEM.status_code
+                        message.DEFAULT_MESSAGE.message = message.SUCCESS_UPDATE_ITEM.message
+                        message.DEFAULT_MESSAGE.response = genero //envia os dados do filme no response, para o usuário visualizar
+
+                        return message.DEFAULT_MESSAGE //200 retornando a mensagem criada
+                    }else{
+                        return message.ERROR_INTERNAL_SERVER_MODEL //500 model
+                    }
+
+                }else{
+                    return validarDadosGenero //400 mensagem de erro da própria validação 
+                }
+
+            }else{
+                return validandoId //400(id inválido) ou 404(não encontrado) ou 500 (contraller e model)
+            }
+
+        }else{
+            message.ERROR_CONTENT_TYPE //415 tipo de dados
+        }
+        
+    } catch (error) {
+        console.log(error)
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER //500 controler
+    }
 }
 
 //função para listar todos os generos
