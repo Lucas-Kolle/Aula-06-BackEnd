@@ -136,7 +136,7 @@ show tables;
 desc tbl_classificacao;
 
 #Excluir tabela
-drop table tbl_genero_filme;
+drop table tbl_classificacao_filme;
 
 # Vizualizar conteúdos da tabela
 select * from tbl_genero;
