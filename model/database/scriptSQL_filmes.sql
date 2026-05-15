@@ -86,6 +86,15 @@ values(
     "asdasdasdasfafasdasasd"
 );
 
+update tbl_diretor set 
+	nome 			= "teste",
+    nacionalidade	= "teste",
+    data_nascimento = "2028-02-20",
+    biografia		= "teste"
+where id = 1;
+    
+    select * from tbl_diretor;
+
 #Criando tabela de classificacao
 create table tbl_classificacao (
 	id				int not null primary key auto_increment,
