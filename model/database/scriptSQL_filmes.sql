@@ -58,6 +58,11 @@ update tbl_genero set
 	genero = "Drama Teste 3"
 where id = 12;
 
+#Deletando um item da tabela
+delete from tbl_genero where id = 4;
+
+select * from tbl_genero;
+
 #Criando tabela de diretor
 create table tbl_diretor (
 	id					int not null primary key auto_increment,
@@ -131,7 +136,7 @@ show tables;
 desc tbl_classificacao;
 
 #Excluir tabela
-drop table tbl_filme;
+drop table tbl_genero_filme;
 
 # Vizualizar conteúdos da tabela
 select * from tbl_genero;

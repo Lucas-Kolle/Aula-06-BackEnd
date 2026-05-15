@@ -213,6 +213,34 @@ const buscarGeneroID = async function(id){
 //função para excluir um genero pelo id
 const excluirGenero = async function(id){
     
+    //importando arquivo de mensagem
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+        
+        //enviando id para função "buscarGeneroId" para verificar existencia
+        let verificarId = await buscarGeneroID(id)
+
+        //tratando retorno da função
+        if(verificarId.status){
+
+            //mandando para o DAO
+            let result = await generoDAO.deleteGenero(id) 
+
+            //tratando retornos
+            if(result){
+                return message.SUCCESS_DELETED_ITEM //200 registro excluido
+            }else{
+                return message.ERROR_INTERNAL_SERVER_MODEL //500 model
+            }
+
+        }else{
+            return verificarId //retorna a mensagem criada na função, contendo os possíveis erros no id (não existe, id errado ...)
+        }
+        
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER //500 controller
+    }
 }
 
 //função para fazer a validação dos dados recebidos (POST / PUT)

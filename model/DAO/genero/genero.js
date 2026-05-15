@@ -122,6 +122,26 @@ const selectByIdGenero = async function(id){
 //função para deletar um filme pelo id
 const deleteGenero = async function(id){
 
+    try {
+
+        //criando variável sql
+        let sql = `delete from tbl_genero where id = ${id};`
+
+        console.log(sql)
+
+        //enviando para o banco
+        let result = await knexConex.raw(sql)
+
+        //tratando retorno
+        if(result){
+            return true
+        }else{
+            return false
+        }
+        
+    } catch (error) {
+        return false
+    }
 }
 
 //exportando arquivos

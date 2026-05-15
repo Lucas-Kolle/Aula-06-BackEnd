@@ -173,6 +173,20 @@ app.put("/v1/senai/locadora/genero/:id", bodyParserJSON, async function(request,
     response.json(result)
 })
 
+//deletar genero
+app.delete("/v1/senai/locadora/genero/:id", async function(request, response){
+
+    //recebendo o id
+    let id = request.params.id
+
+    //enviando id para realizar o delete
+    let result = await controllerGenero.excluirGenero(id)
+
+    //devolvendo mensagem e status-code
+    response.status(result.status_code)
+    response.json(result)
+})
+
 
 //iniciando uma API para receber requisições
 app.listen(8080, function(){ //decidindo a porta para saída do conteúdo
