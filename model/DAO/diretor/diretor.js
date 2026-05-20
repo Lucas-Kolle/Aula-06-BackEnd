@@ -88,16 +88,62 @@ const updateDiretor = async function(diretor){
 //retornar todos os diretores
 const selectAllDiretor = async function(){
 
+    try {
+        
+        //criando variável sql
+        let sql = `select * from tbl_diretor order by id desc;`
+
+        //enviando para o banco de dados
+        let result = await knexConex.raw(sql)
+
+        //Verificando se é um array
+        if(Array.isArray(result)){
+
+            return result[0]
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
 }
 
 //retornar diretor com base no id
 const selectByIdDiretor = async function(id){
 
+    try {
+        
+        let sql = `select * from tbl_diretor where id = ${id}`
+
+        let result = await knexConex.raw(sql)
+
+        if(Array.isArray(result)){
+            return result[0]
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
 }
 
 //deletar diretor pelo id
 const deleteDiretor = async function(id){
 
+    try {
+        
+        let sql = `delete from tbl_diretor where id = ${id}`
+
+        let result = await knexConex.raw(sql)
+
+        if(result){
+            return false
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
 }
 
 /* EXPORTANDO FUNÇÕES */
