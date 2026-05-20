@@ -30,7 +30,7 @@ const inserirNovoDiretor = async function(contentType, diretor){
             if(!validando){
 
                 //mandando pro banco 
-                let result = await diretorDAO(diretor)
+                let result = await diretorDAO.insertDiretor(diretor)
 
                 if(result){
 
@@ -60,20 +60,161 @@ const inserirNovoDiretor = async function(contentType, diretor){
 //função para atualizar um diretor
 const atualizarDiretor = async function(id, contentType, diretor){
 
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+        //verificando existencia do id
+        let validarId = await buscarDiretorID(id)
+
+        if(validarId.status){
+
+            //verificando tipo de dados do diretor
+            if(String(contentType).toUpperCase == "APPLICATION/JSON"){
+
+                //validar dados do diretor
+                let validarDadosDiretor = await validarDadosDiretor(diretor)
+
+                if(!validarDadosDiretor){
+
+                    //se estiver tudo certo ele adiciona o id no objeto diretor
+                    diretor.id = Number(id)
+    
+                    //enviando para o banco 
+                    let result = await diretorDAO.updateDiretor(diretor)
+
+                    if(result){
+
+                        message.DEFAULT_MESSAGE.status = message.SUCCESS_UPDATE_ITEM.status
+                        message.DEFAULT_MESSAGE.status_code = message.SUCCESS_UPDATE_ITEM.status_code
+                        message.DEFAULT_MESSAGE.message = message.SUCCESS_UPDATE_ITEM.message
+                        message.DEFAULT_MESSAGE.response = diretor //envia os dados do diretor no response, para o usuário visualizar
+
+                        return message.DEFAULT_MESSAGE //200
+                    }else{
+                        return message.ERROR_INTERNAL_SERVER_MODEL
+                    }
+    
+                }else{
+                    return validarDadosDiretor
+                }
+            }else{
+                return message.ERROR_CONTENT_TYPE
+            }
+
+        }else{
+            return validarId //mensagem de erro da própria função
+        }
+        
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
+
 }
 
 //função para retornar todos os diretores
 const listarDiretores = async function(){
 
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+        
+        let result = diretorDAO.selectAllDiretor()
+
+        if(result){
+
+            if(result.length > 0){
+
+                //personalizando o cabeçalho com a mensagem de sucesso
+                message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
+                message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
+                message.DEFAULT_MESSAGE.response.count = result.length
+                message.DEFAULT_MESSAGE.response.diretor = result
+
+                return message.DEFAULT_MESSAGE //retorna o cabeçalho com o "result" que contém os dados do diretor
+
+            }else{
+                return message.ERROR_NOT_FOUND //404
+            }
+        }else{
+            return message.ERROR_INTERNAL_SERVER_MODEL
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
 }
 
 //função para bucar um diretor pelo id
 const buscarDiretorID = async function(id){
 
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+
+        //tratando id
+        //tratando o id, para não mandar conteúdos errados pro banco
+        if(id == undefined || id == "" || id == null || isNaN(id)){
+            message.ERROR_BAD_REQUEST.field = "[ID] INVÁLIDO"
+            return message.ERROR_BAD_REQUEST //400
+        
+        //se o id estiver no formato correto ele ennvia pro DAO
+        }else{
+            
+            //enviando para o banco
+            let result = await diretorDAO.selectByIdDiretor(id)
+
+            //tratando retorno
+            if(result){
+
+                //verificando tamanho do array de resposta
+                if(result.length > 0){
+
+                    //editando cabeçalho
+                    message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
+                    message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
+                    message.DEFAULT_MESSAGE.response.diretor = result
+
+                    return message.DEFAULT_MESSAGE //200                 
+                }else{
+                    return message.ERROR_NOT_FOUND
+                }
+            }else{
+                return message.ERROR_INTERNAL_SERVER_MODEL
+            }
+        }
+        
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
 }
 
 //função para excluir diretor
 const excluirDiretor = async function(id){
+
+    let message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+        
+        //validando id
+        let validarId = await buscarDiretorID(id)
+
+        if(validarId.status){
+
+            //mandadno para o banco
+            let result = await diretorDAO.deleteDiretor(id)
+
+            if(result){
+
+                return message.SUCCESS_DELETED_ITEM //200 registro excluido
+            }else{
+                return message.ERROR_INTERNAL_SERVER_MODEL
+            }
+        }else{
+            return message.ERROR_BAD_REQUEST
+        }
+
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER
+    }
 
 }
 
