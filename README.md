@@ -1,4 +1,4 @@
-﻿# 📱 API WhatsApp (Simulação)
+﻿# 🎬API de Filmes
 Uma API REST desenvolvida em Node.js que simula o funcionamento básico de uma locadora de filmes. A API fornece dados completos e dinamicos de filmes, diretores, atores e etc. Projetada para integração com aplicações Front-End, fornecendo dados estruturados de forma eficiente.
 
 ## 🚀 Objetivo
