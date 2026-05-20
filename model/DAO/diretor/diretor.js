@@ -70,8 +70,14 @@ const updateDiretor = async function(diretor){
 	        where id = 1;
         `
 
-        /* PAREI AQUI !!!!!!!!!!!!!!!! */
-        /* EXECUTAR NO BANCO DE DADOS E RETORNAR PARA REQUISIÇÃO */
+        let result = await knexConex.raw(sql)
+
+        //validando retorno
+        if(result){
+            return true
+        }else{
+            return false
+        }
         
     } catch (error) {
         return false
