@@ -60,7 +60,7 @@ const inserirNovoFilme = async function(filme, contentType){
                 }else{
 
                     //retorna a mensagem de erro completa
-                    message.ERROR_INTERNAL_SERVER_MODEL
+                    return message.ERROR_INTERNAL_SERVER_MODEL
 
                 }
 
