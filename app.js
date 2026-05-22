@@ -115,6 +115,8 @@ app.delete('/v1/senai/locadora/filme/:id', async function (request, response){
     response.json(result)
 })
 
+/* CRUD DE GENERO */
+
 //cadastrar novo genero
 app.post("/v1/senai/locadora/genero", bodyParserJSON /*serve para captar o conteúdo enviado na requisição e colocar*/, async function(request, response){
     
@@ -185,6 +187,33 @@ app.delete("/v1/senai/locadora/genero/:id", async function(request, response){
     //devolvendo mensagem e status-code
     response.status(result.status_code)
     response.json(result)
+})
+
+/* CRUD DE DIRETOR */
+
+//adicionar novo diretor
+app.post("/v1/senai/locadora/diretor", bodyParserJSON, async function(request, response){
+
+})
+
+//listar todos os diretores
+app.get("/v1/senai/locadora/diretor", async function(request, response){
+
+})
+
+//buscasr um diretor específico
+app.get("/v1/senai/locadora/diretor/:id", async function(request, response){
+
+})
+
+//atualizar diretor
+app.put("/v1/senai/locadora/diretor", bodyParserJSON, async function(request, response){
+
+})
+
+//deletar diretor
+app.delete("/v1/senai/locadora/diretor", async function(request, response){
+    
 })
 
 
