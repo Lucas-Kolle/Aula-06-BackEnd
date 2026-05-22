@@ -150,11 +150,75 @@ const deleteGeneroFilme = async function(id){
 
 /* ATÉ AQUI FOI SÓ ALTERAÇÃO SIMPLES, DAQUI PRA BAIXO SÃO IMPLEMENTAÇÕES DIFERENTES */
 
+//função para retornar os filmes pelo id do genero (filmes relacionados a esse genero)
+const selectFilmeByIdGenero = async function(idGenero){
+
+    try {
+        
+        //criando variável sql
+        let sql = `select   tbl_filme.*
+                        from tbl_filme
+                            inner join tbl_genero_filme
+                                on tbl_filme.id = tbl_genero_filme.id_filme
+                            inner join tbl_genero
+                                on tbl_genero.id = tbl_genero_filme.id_genero
+                    where tbl_genero.id = ${idGenero};`
+
+        //executando no banco de dados
+        let result = await knexConex.raw(sql)
+
+        //validando retorno
+        if(Array.isArray(result)){ //vendo se é um array
+
+            return result[0] //retornando somente o que nós pedimos, sem expecificações da tabela
+        //se não for array ele cai aqui
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
+}
+
+//função para retornar os generos pelo id do filme (generos relacionados a esse filme)
+const selectGeneroByIdFilme = async function(idFilme){
+
+    try {
+        
+        //criando variável sql
+        let sql = `select   tbl_genero.*
+                        from tbl_filme
+                            inner join tbl_genero_filme
+                                on tbl_filme.id = tbl_genero_filme.id_filme
+                            inner join tbl_genero
+                                on tbl_genero.id = tbl_genero_filme.id_genero
+                    where tbl_filme.id = ${idFilme};`
+
+        //executando no banco de dados
+        let result = await knexConex.raw(sql)
+
+        //validando retorno
+        if(Array.isArray(result)){ //vendo se é um array
+
+            return result[0] //retornando somente o que nós pedimos, sem expecificações da tabela
+        //se não for array ele cai aqui
+        }else{
+            return false
+        }
+    } catch (error) {
+        return false
+    }
+}
+
+
+
 //exportando arquivos
 module.exports = {
     insertGeneroFilme,
     updateGeneroFilme,
     selectAllGeneroFilme,
     selectByIdGeneroFilme,
-    deleteGeneroFilme
+    deleteGeneroFilme,
+    selectFilmeByIdGenero,
+    selectGeneroByIdFilme
 }
