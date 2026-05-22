@@ -53,6 +53,12 @@ const SUCESS_CHEATED_ITEM = {
     message: "Registro inserido com sucesso!"
 }
 
+const SUCESS_CHEATED_ITEM_WARNING = {
+    status: true,
+    status_code: 201,
+    message: "Os dados principais foram inseridos com sucesso, porém alguns dados apresentaram problemas e não foram inseridos!"
+}
+
 const SUCESS_RESPONSE = {
     status: true,
     status_code: 200
@@ -82,5 +88,6 @@ module.exports = {
     SUCESS_CHEATED_ITEM,
     SUCESS_RESPONSE,
     SUCCESS_DELETED_ITEM,
-    SUCCESS_UPDATE_ITEM
+    SUCCESS_UPDATE_ITEM,
+    SUCESS_CHEATED_ITEM_WARNING
 }

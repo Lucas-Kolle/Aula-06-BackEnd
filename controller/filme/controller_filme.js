@@ -67,6 +67,10 @@ const inserirNovoFilme = async function(filme, contentType){
                         //enviando os ids para a controller da tabela intermediaria
                         let resultInsertGenero = await controler_genero_filme.inserirNovoGeneroFilme(generoFilme)
 
+                        if(!resultInsertGenero.status){
+                            return message.SUCESS_CHEATED_ITEM_WARNING //201, mas com aviso de que os generos não foram inseridos
+                        }
+
                     }
 
                     message.DEFAULT_MESSAGE.status = message.SUCESS_CHEATED_ITEM.status //cria um atributo de status no cabeçalho "DEFAULT_MESSAGE" e atribui um valor predefinido no "SUCESS_CHEATED_ITEM"
@@ -171,6 +175,17 @@ const listarFilmes = async function(){
 
             //verificando se o ARRAY está vazio (se for maior do que zero, ele envia o "200" se não, ele envia o "404")
             if(result.length > 0){
+
+                //percorrendo o array de filmes
+                for(filme of result){
+
+                    //cria o objeto de generos relacionados ao filme
+                    let resultGenero = await controler_genero_filme.buscarGeneroIdFilme(filme.id) //enviando o id do filme para a função que busca os generos relacionados a ele
+
+                    if(resultGenero.status){ //se o status for verdadeiro, ele continua o processo
+                        filme.genero = resultGenero.response.genero //cria um atributo "genero" dentro do Json de filme e atribui o resultado do genero relacionado a ele
+                    }
+                }
                 //personalizando o cabeçalho com a mensagem de sucesso
                 message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
                 message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
