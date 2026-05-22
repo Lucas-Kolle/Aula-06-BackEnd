@@ -138,14 +138,10 @@ values (
     "asdljafjrirjfkjdlkasnkcndkslkdjfirirjkdjaeasnaskln"
 );
 
+delete from tbl_genero_filme;
 
-select   tbl_filme.*
-                        from tbl_filme
-                            inner join tbl_genero_filme
-                                on tbl_filme.id = tbl_genero_filme.id_filme
-                            inner join tbl_genero
-                                on tbl_genero.id = tbl_genero_filme.id_genero
-                    where tbl_genero.id = 4;
+select * from tbl_filme;
+select * from tbl_genero_filme;
 
 #Vizualizar tabelas
 show tables;

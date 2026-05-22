@@ -11,6 +11,9 @@ const config_message = require("../modulo/configMessages.js")
 //Importando o arquivo de filme dentro da pasta "model"
 const filmeDAO = require("../../model/DAO/filme/filme.js")
 
+//import de arquivos de Controller
+const controler_genero_filme = require("./controller_genero_filme.js")
+
 
 //função para inserir novo filme
 const inserirNovoFilme = async function(filme, contentType){
@@ -50,6 +53,21 @@ const inserirNovoFilme = async function(filme, contentType){
                 if(result){ //201
 
                     filme.id = result //criando o atributo ID no Json do filme e colocando o ID gerado no momento do insert
+
+                    //Manipulação de dados para inserir os Generos do Filme
+
+                    for(genero of filme.genero){ //estrutura para percorrer o array de genero (recebido na requisição) no json de filmes 
+                       
+                        //cria um json com os ids do filme e do genero, para mandar os dois juntos
+                        let generoFilme = {
+                            "id_genero": genero.id,
+                            "id_filme": filme.id
+                        }
+
+                        //enviando os ids para a controller da tabela intermediaria
+                        let resultInsertGenero = await controler_genero_filme.inserirNovoGeneroFilme(generoFilme)
+
+                    }
 
                     message.DEFAULT_MESSAGE.status = message.SUCESS_CHEATED_ITEM.status //cria um atributo de status no cabeçalho "DEFAULT_MESSAGE" e atribui um valor predefinido no "SUCESS_CHEATED_ITEM"
                     message.DEFAULT_MESSAGE.status_code = message.SUCESS_CHEATED_ITEM.status_code

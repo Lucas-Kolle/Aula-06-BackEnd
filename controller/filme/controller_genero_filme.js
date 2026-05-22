@@ -14,50 +14,45 @@ const generoFilmeDAO = require("../../model/DAO/genero_filme/genero_filme.js")
 
 
 //função para inserir um genero novo
-const inserirNovoGeneroFilme = async function(generoFilme, contentType){
+const inserirNovoGeneroFilme = async function(generoFilme){
 
     //importando arquivo de mensagens 
     const message = JSON.parse(JSON.stringify(config_message)) //primeiro transforma em ele transformar em string para poder copiar, depois ele tranforma em json para ser utilizavel
 
     try {
 
-        //tratando o tipo de dados recebido (SÓ ACEITAMOS JSON)
-        if(String(contentType).toUpperCase() == "APPLICATION/JSON"){ //se o content-type (informação presente no headers da requisição) não for um json ele cai no else
+        //tratando o tipo de dados recebido
 
-            //enviado dados para a função validar
-            let validar = await validarDados(generoFilme)
+        //enviado dados para a função validar
+        let validar = await validarDados(generoFilme)
 
-            //tratando retorno da validação
-            if(validar){ //se a função validarDados() retornar a mensagem de erro ele envia para o app
+        //tratando retorno da validação
+        if(validar){ //se a função validarDados() retornar a mensagem de erro ele envia para o app
 
-                return validar // 400 (O retorno da função já é uma mensagem de erro)
+            return validar // 400 (O retorno da função já é uma mensagem de erro)
 
-            //se os dados estiverem corretos ele envia para o DAO 
-            }else{
-                
-                //enviando dados para o DAO (mandar pro banco de dados)
-                let result = await generoFilmeDAO.insertGeneroFilme(generoFilme)
-
-                //validando retorno da função insertGenero()
-                if(result){ //se o item for cadastrado corretamente ele envia uma mensagem de sucesso
-
-                    generoFilme.id = result //pegando o id do genero cadastrado e adicionando no JSON de genero
-
-                    message.DEFAULT_MESSAGE.status = message.SUCESS_CHEATED_ITEM.status //cria um atributo de status no cabeçalho "DEFAULT_MESSAGE" e atribui um valor predefinido no "SUCESS_CHEATED_ITEM"
-                    message.DEFAULT_MESSAGE.status_code = message.SUCESS_CHEATED_ITEM.status_code
-                    message.DEFAULT_MESSAGE.message = message.SUCESS_CHEATED_ITEM.message
-                    message.DEFAULT_MESSAGE.response = generoFilme //aparece os dados do genero do response para o usuário conferir
-
-                //se a função retornar um "false" (o genero não foi cadastrado) ele cai aqui
-                }else{
-                    return message.ERROR_INTERNAL_SERVER_MODEL //500 (model) item não cadastrado
-                }
-
-                return message.DEFAULT_MESSAGE //201 MENSAGEM DE SUCESSO NO CADASTRO
-            }
-        
+        //se os dados estiverem corretos ele envia para o DAO 
         }else{
-            return message.ERROR_CONTENT_TYPE //415 (retorna erro de tipo de dados) 
+                
+            //enviando dados para o DAO (mandar pro banco de dados)
+            let result = await generoFilmeDAO.insertGeneroFilme(generoFilme)
+
+            //validando retorno da função insertGenero()
+            if(result){ //se o item for cadastrado corretamente ele envia uma mensagem de sucesso
+
+                generoFilme.id = result //pegando o id do genero cadastrado e adicionando no JSON de genero
+
+                message.DEFAULT_MESSAGE.status = message.SUCESS_CHEATED_ITEM.status //cria um atributo de status no cabeçalho "DEFAULT_MESSAGE" e atribui um valor predefinido no "SUCESS_CHEATED_ITEM"
+                message.DEFAULT_MESSAGE.status_code = message.SUCESS_CHEATED_ITEM.status_code
+                message.DEFAULT_MESSAGE.message = message.SUCESS_CHEATED_ITEM.message
+                message.DEFAULT_MESSAGE.response = generoFilme //aparece os dados do genero do response para o usuário conferir
+
+            //se a função retornar um "false" (o genero não foi cadastrado) ele cai aqui
+            }else{
+                return message.ERROR_INTERNAL_SERVER_MODEL //500 (model) item não cadastrado
+            }
+
+            return message.DEFAULT_MESSAGE //201 MENSAGEM DE SUCESSO NO CADASTRO
         }
         
     } catch (error) {
@@ -66,58 +61,51 @@ const inserirNovoGeneroFilme = async function(generoFilme, contentType){
 }
 
 //função para atualizar um genero
-const atualizarGenero = async function(genero, contentType, id){
+const atualizarGeneroFilme = async function(generoFilme, contentType, id){
 
     //importando mensagens
     let message = JSON.parse(JSON.stringify(config_message))
 
     try {
 
-        //validando tipo de dados para saber se é um json
-        if(String(contentType).toUpperCase() == "APPLICATION/JSON"){
+        //validando id e existencia do conteúdo no banco de dados
+        let validandoId = await buscarGeneroFilmeID(id)
 
-            //validando id e existencia do conteúdo no banco de dados
-            let validandoId = await buscarGeneroID(id)
+        //validando retorno da função de buscarGenero
+        if(validandoId.status){ //vai olhar o status (true / false) da função
 
-            //validando retorno da função de buscarGenero
-            if(validandoId.status){ //vai olhar o status (true / false) da função
+            //enviando dados do genero para a função de validação
+            let validarDadosGeneroFilme = await validarDados(generoFilme)
 
-                //enviando dados do genero para a função de validação
-                let validarDadosGenero = await validarDados(genero)
+            //validaddo retorno da função
+            if(!validarDadosGeneroFilme){
 
-                //validaddo retorno da função
-                if(!validarDadosGenero){
+                //adicionando o id no objeto "genero" recebido na requisição, para enviar tudo em um único objeto
+                generoFilme.id = Number(id)
 
-                    //adicionando o id no objeto "genero" recebido na requisição, para enviar tudo em um único objeto
-                    genero.id = Number(id)
+                //enviando para para o DAO 
+                let result = await generoFilmeDAO.updateGeneroFilme(generoFilme)
 
-                    //enviando para para o DAO 
-                    let result = await generoDAO.updateGenero(genero)
+                //tratando retorno do DAO
+                if(result){
 
-                    //tratando retorno do DAO
-                    if(result){
+                    //montando o cabeçalho de resposta, pois a requisição não pede nada pro banco
+                    message.DEFAULT_MESSAGE.status = message.SUCCESS_UPDATE_ITEM.status
+                    message.DEFAULT_MESSAGE.status_code = message.SUCCESS_UPDATE_ITEM.status_code
+                    message.DEFAULT_MESSAGE.message = message.SUCCESS_UPDATE_ITEM.message
+                    message.DEFAULT_MESSAGE.response = generoFilme //envia os dados do filme no response, para o usuário visualizar
 
-                        //montando o cabeçalho de resposta, pois a requisição não pede nada pro banco
-                        message.DEFAULT_MESSAGE.status = message.SUCCESS_UPDATE_ITEM.status
-                        message.DEFAULT_MESSAGE.status_code = message.SUCCESS_UPDATE_ITEM.status_code
-                        message.DEFAULT_MESSAGE.message = message.SUCCESS_UPDATE_ITEM.message
-                        message.DEFAULT_MESSAGE.response = genero //envia os dados do filme no response, para o usuário visualizar
-
-                        return message.DEFAULT_MESSAGE //200 retornando a mensagem criada
-                    }else{
-                        return message.ERROR_INTERNAL_SERVER_MODEL //500 model
-                    }
-
+                    return message.DEFAULT_MESSAGE //200 retornando a mensagem criada
                 }else{
-                    return validarDadosGenero //400 mensagem de erro da própria validação 
+                    return message.ERROR_INTERNAL_SERVER_MODEL //500 model
                 }
 
             }else{
-                return validandoId //400(id inválido) ou 404(não encontrado) ou 500 (contraller e model)
+                return validarDadosGeneroFilme //400 mensagem de erro da própria validação 
             }
 
         }else{
-            message.ERROR_CONTENT_TYPE //415 tipo de dados
+            return validandoId //400(id inválido) ou 404(não encontrado) ou 500 (contraller e model)
         }
         
     } catch (error) {
@@ -127,7 +115,7 @@ const atualizarGenero = async function(genero, contentType, id){
 }
 
 //função para listar todos os generos
-const listarGeneros = async function(){
+const listarGeneroFilme = async function(){
 
     //importando arquivo de mensagens
     let message = JSON.parse(JSON.stringify(config_message)) //primeiro transforma em ele transformar em string para poder copiar, depois ele tranforma em json para ser utilizavel
@@ -135,7 +123,7 @@ const listarGeneros = async function(){
     try {
 
         //chamando a função para enviar os dados
-        let result = await generoDAO.selectAllGenero()
+        let result = await generoFilmeDAO.selectAllGeneroFilme()
 
         //verificando retorno 
         if(result){
@@ -147,7 +135,7 @@ const listarGeneros = async function(){
                 message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status // True or False
                 message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code // 200
                 message.DEFAULT_MESSAGE.response.count = result.length // Mostra a quantidade de itens
-                message.DEFAULT_MESSAGE.response.genero = result // Mostra os itens
+                message.DEFAULT_MESSAGE.response.generoFilme = result // Mostra os itens
 
                 return message.DEFAULT_MESSAGE // retorna as mensagens e os dados
 
@@ -167,7 +155,7 @@ const listarGeneros = async function(){
 }
 
 //função para buscar um genero pelo id
-const buscarGeneroID = async function(id){
+const buscarGeneroFilmeID = async function(id){
 
     //importando o arquivo de mensagens
     const message = JSON.parse(JSON.stringify(config_message))
@@ -184,7 +172,7 @@ const buscarGeneroID = async function(id){
         }else{ //se estiver tudo certo com o id ele continua o programa
 
             //enviando para o DAO
-            let result = await generoDAO.selectByIdGenero(id)
+            let result = await generoFilmeDAO.selectByIdGeneroFilme(id)
 
             //vaidando retorno
             if(result){ //se tiver algo ele cai aqui
@@ -194,7 +182,7 @@ const buscarGeneroID = async function(id){
 
                     message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status //true / false
                     message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code //200
-                    message.DEFAULT_MESSAGE.response.genero = result //conteúdo
+                    message.DEFAULT_MESSAGE.response.generoFilme = result //conteúdo
 
                     return message.DEFAULT_MESSAGE //retornando dados
 
@@ -211,7 +199,7 @@ const buscarGeneroID = async function(id){
 }
 
 //função para excluir um genero pelo id
-const excluirGenero = async function(id){
+const excluirGeneroFilme = async function(id){
     
     //importando arquivo de mensagem
     let message = JSON.parse(JSON.stringify(config_message))
@@ -219,13 +207,13 @@ const excluirGenero = async function(id){
     try {
         
         //enviando id para função "buscarGeneroId" para verificar existencia
-        let verificarId = await buscarGeneroID(id)
+        let verificarId = await buscarGeneroFilmeID(id)
 
         //tratando retorno da função
         if(verificarId.status){
 
             //mandando para o DAO
-            let result = await generoDAO.deleteGenero(id) 
+            let result = await generoFilmeDAO.deleteGeneroFilme(id) 
 
             //tratando retornos
             if(result){
@@ -274,11 +262,104 @@ const validarDados = function(generoFilme){
     }
 }
 
+/* CONTEÚDOS NOVOS DAQUI PRA BAIXO */
+
+//função para retornar os filmes pelo id do genero (filmes relacionados a esse genero)
+const buscarFilmeIdGenero = async function(idGenero){
+
+    //importando o arquivo de mensagens
+    const message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+        
+        //validando id
+        if(idGenero == undefined || idGenero == "" || idGenero == null || isNaN(idGenero)){ //se o id estiver erra ele vai entrar aqui
+
+            //personalizando mensagem
+            message.ERROR_BAD_REQUEST.field = "O campo [ID_GENERO] está incorreto!"
+            return message.ERROR_BAD_REQUEST //400 (requisição incorreta)
+
+        }else{ //se estiver tudo certo com o id ele continua o programa
+
+            //enviando para o DAO
+            let result = await generoFilmeDAO.selectFilmeByIdGenero(idGenero)
+
+            //vaidando retorno
+            if(result){ //se tiver algo ele cai aqui
+
+                //conferindo tamanho do array de retorno
+                if(result.length > 0){ //se estiver conteúdo no array ele cai aqui
+
+                    message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status //true / false
+                    message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code //200
+                    message.DEFAULT_MESSAGE.response.generoFilme = result //conteúdo
+
+                    return message.DEFAULT_MESSAGE //retornando dados
+
+                }else{ //se estiver vazio ele cai aqui
+                    return message.ERROR_NOT_FOUND //404 não encontrado
+                }
+            }else{ //se não tiver nada ele cai aqui
+                return message.ERROR_INTERNAL_SERVER_MODEL //500 (model) erro no banco 
+            }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500 (controler)
+    }
+}
+
+//função para retornar os generos pelo id do filme (generos relacionados a esse filme)
+const buscarGeneroIdFilme = async function(idFilme){
+
+    //importando o arquivo de mensagens
+    const message = JSON.parse(JSON.stringify(config_message))
+
+    try {
+        
+        //validando id
+        if(idFilme == undefined || idFilme == "" || idFilme == null || isNaN(idFilme)){ //se o id estiver erra ele vai entrar aqui
+
+            //personalizando mensagem
+            message.ERROR_BAD_REQUEST.field = "O campo [ID_GENERO] está incorreto!"
+            return message.ERROR_BAD_REQUEST //400 (requisição incorreta)
+
+        }else{ //se estiver tudo certo com o id ele continua o programa
+
+            //enviando para o DAO
+            let result = await generoFilmeDAO.selectGeneroByIdFilme(idFilme)
+
+            //vaidando retorno
+            if(result){ //se tiver algo ele cai aqui
+
+                //conferindo tamanho do array de retorno
+                if(result.length > 0){ //se estiver conteúdo no array ele cai aqui
+
+                    message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status //true / false
+                    message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code //200
+                    message.DEFAULT_MESSAGE.response.generoFilme = result //conteúdo
+
+                    return message.DEFAULT_MESSAGE //retornando dados
+
+                }else{ //se estiver vazio ele cai aqui
+                    return message.ERROR_NOT_FOUND //404 não encontrado
+                }
+            }else{ //se não tiver nada ele cai aqui
+                return message.ERROR_INTERNAL_SERVER_MODEL //500 (model) erro no banco 
+            }
+        }
+    } catch (error) {
+        return message.ERROR_INTERNAL_SERVER_CONTROLLER // 500 (controler)
+    }
+}
+
+
 //exportando arquivos
 module.exports = {
     inserirNovoGeneroFilme,
-    atualizarGenero,
-    listarGeneros,
-    buscarGeneroID,
-    excluirGenero
+    atualizarGeneroFilme,
+    listarGeneroFilme,
+    buscarGeneroFilmeID,
+    excluirGeneroFilme,
+    buscarFilmeIdGenero,
+    buscarGeneroIdFilme
 }
