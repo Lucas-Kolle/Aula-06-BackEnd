@@ -121,16 +121,44 @@ const atualizarFilme = async function(filme, id, contentType){
             let resultBuscarFilme = await buscarFilmeID(id)
 
             if (resultBuscarFilme.status) {
+
                 //Chamar a função para validar os dados para alteração filme (Body)
                 let validar = await validarDados(filme)
+
                 if (!validar) {
+
                     //Adicionar um atributo ID no JSON de filme, para enviar ao DAO um único objeto
                     filme.id = Number(id)
 
                     //Chama a função para atualizar o filme no BD
                     let result = await filmeDAO.updateFilme(filme)
 
-                    if (result) {
+                    if(result){
+
+                        //Manipulação de dados na tabela de relação entre filme e genero (tabela intermediária)
+                        let resultDeleteGenero = await controler_genero_filme.excluirGenerosIdFilme(filme.id) //exclui os generos relacionados ao filme, para depois inserir os novos generos relacionados a ele
+
+                        //após a exlusão de todos os gêneros relacionados com o filme
+                        if(resultDeleteGenero.status){
+
+                            //Manipulação de dados para inserir os Generos do Filme
+                            for(genero of filme.genero){ //estrutura para percorrer o array de genero (recebido na requisição) no json de filmes 
+                       
+                                //cria um json com os ids do filme e do genero, para mandar os dois juntos
+                                let generoFilme = {
+                                    "id_genero": genero.id,
+                                    "id_filme": filme.id
+                                }
+
+                                //enviando os ids para a controller da tabela intermediaria
+                                let resultInsertGenero = await controler_genero_filme.inserirNovoGeneroFilme(generoFilme)
+
+                                if(!resultInsertGenero.status){
+                                    return message.SUCESS_CHEATED_ITEM_WARNING //201, mas com aviso de que os generos não foram inseridos
+                                }
+                            }
+                        }
+
                         message.DEFAULT_MESSAGE.status = message.SUCCESS_UPDATE_ITEM.status
                         message.DEFAULT_MESSAGE.status_code = message.SUCCESS_UPDATE_ITEM.status_code
                         message.DEFAULT_MESSAGE.message = message.SUCCESS_UPDATE_ITEM.message
