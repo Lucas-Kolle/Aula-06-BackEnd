@@ -39,7 +39,7 @@ const insertDiretor = async function(diretor){
             `
 
         //executando no banco de dados
-        let result = knexConex.raw(sql) //usa a coneção com banco para executar a variável sql
+        let result = await knexConex.raw(sql) //usa a coneção com banco para executar a variável sql
 
         //validadndo retorno do banco
         if(result){
@@ -49,6 +49,7 @@ const insertDiretor = async function(diretor){
         }
         
     } catch (error) {
+        console.log(error)
         return false
     }
 
@@ -137,7 +138,7 @@ const deleteDiretor = async function(id){
         let result = await knexConex.raw(sql)
 
         if(result){
-            return false
+            return true
         }else{
             return false
         }

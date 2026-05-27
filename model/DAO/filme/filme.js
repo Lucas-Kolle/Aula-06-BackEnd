@@ -46,6 +46,7 @@ const insertFilme = async function(filme){
         //executar o script sql no banco de dados (passa a variável que nós fizemos)
         let result = await knexConex.raw(sql) //await está dizendo para o javaScript aguardar a resposta
 
+        console.log(result)
         if(result)
             return result[0].insertId //Retorna o ID gerado pelo banco
         else

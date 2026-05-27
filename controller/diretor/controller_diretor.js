@@ -22,7 +22,7 @@ const inserirNovoDiretor = async function(contentType, diretor){
     try {
 
         //validando content type
-        if(String(contentType).toUpperCase == "APPLICATION/JSON"){
+        if(String(contentType).toUpperCase() == "APPLICATION/JSON"){
 
             //validando dados recebidos
             let validando = await validarDadosDiretor(diretor)
@@ -40,6 +40,8 @@ const inserirNovoDiretor = async function(contentType, diretor){
                     message.DEFAULT_MESSAGE.status_code = message.SUCESS_CHEATED_ITEM.status_code
                     message.DEFAULT_MESSAGE.message = message.SUCESS_CHEATED_ITEM.message
                     message.DEFAULT_MESSAGE.response = diretor //aparece os dados do diretor do response para o usuário conferir
+
+                    return message.DEFAULT_MESSAGE //200 (retorna o cabeçalho com a mensagem de sucesso e os dados do diretor)
                 }else{
                     return message.ERROR_INTERNAL_SERVER_MODEL
                 }
@@ -69,12 +71,12 @@ const atualizarDiretor = async function(id, contentType, diretor){
         if(validarId.status){
 
             //verificando tipo de dados do diretor
-            if(String(contentType).toUpperCase == "APPLICATION/JSON"){
+            if(String(contentType).toUpperCase() == "APPLICATION/JSON"){
 
                 //validar dados do diretor
-                let validarDadosDiretor = await validarDadosDiretor(diretor)
+                let validarDados = await validarDadosDiretor(diretor)
 
-                if(!validarDadosDiretor){
+                if(!validarDados){
 
                     //se estiver tudo certo ele adiciona o id no objeto diretor
                     diretor.id = Number(id)
@@ -95,7 +97,7 @@ const atualizarDiretor = async function(id, contentType, diretor){
                     }
     
                 }else{
-                    return validarDadosDiretor
+                    return validarDados
                 }
             }else{
                 return message.ERROR_CONTENT_TYPE
@@ -106,6 +108,7 @@ const atualizarDiretor = async function(id, contentType, diretor){
         }
         
     } catch (error) {
+        console.log(error)
         return message.ERROR_INTERNAL_SERVER_CONTROLLER
     }
 
@@ -118,7 +121,7 @@ const listarDiretores = async function(){
 
     try {
         
-        let result = diretorDAO.selectAllDiretor()
+        let result = await diretorDAO.selectAllDiretor()
 
         if(result){
 
