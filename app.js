@@ -25,6 +25,7 @@ const bodyParser    = require("body-parser")
 const controllerFilme   = require("./controller/filme/controller_filme.js")
 const controllerGenero  = require("./controller/genero/controller_genero.js")
 const controllerDiretor = require("./controller/diretor/controller_diretor.js")
+const controllerAtor    = require("./controller/ator/controller_ator.js")
 
 //criando um objeto para manipular dados do body da API em formato Json
 const bodyParserJSON = bodyParser.json()
@@ -261,6 +262,83 @@ app.delete("/v1/senai/locadora/diretor/:id", async function(request, response){
 
         //enviando id para realizar o delete
         let result = await controllerDiretor.excluirDiretor(idDiretor)
+    
+        //devolvendo mensagem e status-code
+        response.status(result.status_code)
+        response.json(result)
+})
+
+/* CRUD DA TABELA DE ATOR */
+
+//adicionar novo diretor
+app.post("/v1/senai/locadora/ator", bodyParserJSON, async function(request, response){
+
+    //recebendo dados 
+    let dadosAtor = request.body
+
+    //pegando o content-type
+    let contentType = request.headers['content-type']
+
+    //enviando para a controller
+    let result = await controllerAtor.inserirNovoAtor(contentType, dadosAtor)
+
+    //enviando resposta
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+//listar todos os diretores
+app.get("/v1/senai/locadora/ator", async function(request, response){
+
+    //fazendo requisição
+    let result = await controllerAtor.listarAtores()
+
+    //enviando resposta
+    response.status(result.status_code)
+    response.json(result)
+
+})
+
+//buscasr um diretor específico
+app.get("/v1/senai/locadora/ator/:id", async function(request, response){
+
+    //recebendo o id
+    let idAtor = request.params.id
+
+    //enviando para o banco
+    let result = await controllerAtor.buscarAtorId(idAtor)
+
+    //enviando resposta
+    response.status(result.status_code)
+    response.json(result)
+})
+
+//atualizar diretor
+app.put("/v1/senai/locadora/ator/:id", bodyParserJSON, async function(request, response){
+
+        //recebendo o id e o conteúdo para serem enviados
+        let idAtor = request.params.id
+        let dadosAtor = request.body
+        let contentType = request.headers['content-type']
+    
+        //enviando os dados para controller
+        let result = await controllerAtor.atualizarAtor(idAtor, contentType, dadosAtor)
+    
+        //enviando para o usuário
+        response.status(result.status_code)
+        response.json(result)
+    
+})
+
+//deletar diretor
+app.delete("/v1/senai/locadora/ator/:id", async function(request, response){
+    
+        //recebendo o id
+        let idAtor = request.params.id
+
+        //enviando id para realizar o delete
+        let result = await controllerAtor.excluirAtor(idAtor)
     
         //devolvendo mensagem e status-code
         response.status(result.status_code)
