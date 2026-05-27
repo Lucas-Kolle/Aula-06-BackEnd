@@ -55,7 +55,6 @@ const inserirNovoFilme = async function(filme, contentType){
                     filme.id = result //criando o atributo ID no Json do filme e colocando o ID gerado no momento do insert
 
                     //Manipulação de dados para inserir os Generos do Filme
-
                     for(genero of filme.genero){ //estrutura para percorrer o array de genero (recebido na requisição) no json de filmes 
                        
                         //cria um json com os ids do filme e do genero, para mandar os dois juntos
@@ -181,11 +180,16 @@ const listarFilmes = async function(){
 
                     //cria o objeto de generos relacionados ao filme
                     let resultGenero = await controler_genero_filme.buscarGeneroIdFilme(filme.id) //enviando o id do filme para a função que busca os generos relacionados a ele
+                    
+                    /* SE NÃO DER CERTO FAZ UM CONSOLE NO resultGenero PARA ACHAR O ERRO */
+                    //console.log(resultGenero)
 
                     if(resultGenero.status){ //se o status for verdadeiro, ele continua o processo
-                        filme.genero = resultGenero.response.genero //cria um atributo "genero" dentro do Json de filme e atribui o resultado do genero relacionado a ele
+                        filme.genero = resultGenero.response.generoFilme //cria um atributo "genero" dentro do Json de filme e atribui o resultado do generoFilme relacionado a ele
                     }
                 }
+
+
                 //personalizando o cabeçalho com a mensagem de sucesso
                 message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
                 message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
@@ -230,6 +234,18 @@ const buscarFilmeID = async function(id){
 
                 //se o resultado for um ARRAY maior do que zero
                 if(result.length > 0){
+
+                    //percorrendo o array de filmes
+                    for(filme of result){
+
+                        //cria o objeto de generos relacionados ao filme
+                        let resultGenero = await controler_genero_filme.buscarGeneroIdFilme(filme.id) //enviando o id do filme para a função que busca os generos relacionados a ele
+
+                        if(resultGenero.status){ //se o status for verdadeiro, ele continua o processo
+                            filme.genero = resultGenero.response.generoFilme //cria um atributo "genero" dentro do Json de filme e atribui o resultado do generoFilme relacionado a ele
+                        }
+                    }
+
                     //editando cabeçalho
                     message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status
                     message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code
