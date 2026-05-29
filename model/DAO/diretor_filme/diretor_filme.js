@@ -212,7 +212,7 @@ const selectDiretorByIdFilme = async function(idFilme){
 
 
 //função para excluir os diretores filtrando pelo id do filme, essa função será utilizada no update do filme, pois precisa apagar pra depois inserir os novos diretores relacionados a esse filme
-const deleteGenerosByIdFilme = async function(idFilme){
+const deleteDiretoresByIdFilme = async function(idFilme){
 
     try {
 
@@ -246,5 +246,5 @@ module.exports = {
     deleteDiretorFilme,
     selectFilmeByIdDiretor,
     selectDiretorByIdFilme,
-    deleteGenerosByIdFilme
+    deleteDiretoresByIdFilme
 }
