@@ -1,10 +1,14 @@
-
 -- =======================================================
 -- SCRIPTS PARA REALIZAR O CRUD DAS TABELAS (LOCADORA)
 -- =======================================================
 
 
 /* INSERT DAS TABELAS */
+
+
+-- =======================================================
+-- INSERT DAS TABELAS PRINCIPAIS (LOCADORA)
+-- =======================================================
 
 
 -- TABELA DE FILMES
@@ -84,68 +88,45 @@ values (
 );
 
 
+-- =======================================================
+-- INSERT DAS TABELAS INTERMEDIÁRIAS (LOCADORA)
+-- =======================================================
 
---
 
-
-
-
-#Atualizando dados da tabela de genero
-update tbl_genero set 
-	genero = "Drama Teste 3"
-where id = 12;
-
-#Deletando um item da tabela
-delete from tbl_genero where id = 4;
-
-select * from tbl_genero;
-
+-- TABELA DE GENERO E FILME
+insert into tbl_genero_filme (
+	id_genero,
+    id_filme
+)
+values (
+	2,
+    20
+);
 
 
 
+-- TABELA DE DIRETOR E FILME
+insert into tbl_diretor_filme (
+	id_diretor,
+    id_filme
+)
+values (
+	1,
+    32
+);
 
 
 
-update tbl_diretor set 
-	nome 			= "teste",
-    nacionalidade	= "teste",
-    data_nascimento = "2028-02-20",
-    biografia		= "teste"
-where id = 1;
-    
-    select * from tbl_diretor;
-
-
-
-
-
-
-
-
-
-
-delete from tbl_genero_filme;
+-- TABELA DE CLASSIFICAÇÃO E FILME
+insert into tbl_classificacao_filme (
+	id_classificacao,
+    id_filme
+)
+values (
+	1,
+    32
+);
 
 select * from tbl_filme;
-select * from tbl_genero_filme;
-
-#Vizualizar tabelas
 show tables;
-
-#Vizualizar a descrição da tabela
-desc tbl_classificacao;
-
-#Excluir tabela
-drop table tbl_classificacao_filme;
-
-# Vizualizar conteúdos da tabela
-select * from tbl_genero;
-
-#Permite vizualizar o conteudo de uma tabela, ordenando pelo id decrescente
-select * from tbl_filme order by id desc;
-
-# Apagando todos os filmes com o id maior que zero
-delete from tbl_filme where id > 0;
-
-
-
+desc tbl_classificacao_filme;
