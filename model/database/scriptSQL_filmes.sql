@@ -1,7 +1,11 @@
 -- =======================================================
 -- SCRIPTS PARA REALIZAR O CRUD DAS TABELAS (LOCADORA)
 -- =======================================================
+-- Criar o database do Projeto
+create database db_filmes_2026_manha;
 
+-- Entrar no database do Projeto
+use db_filmes_2026_manha;
 
 /* INSERT DAS TABELAS */
 
@@ -123,10 +127,22 @@ insert into tbl_classificacao_filme (
     id_filme
 )
 values (
-	1,
-    32
+	2,
+    31
 );
 
-select * from tbl_filme;
+
+
+-- TABELA DE ATOR E FILME
+insert into tbl_ator_filme (
+	id_ator,
+    id_filme
+)
+values (
+	1,
+    31
+);
+
+select * from tbl_ator;
 show tables;
 desc tbl_classificacao_filme;
