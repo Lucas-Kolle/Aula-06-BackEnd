@@ -1,8 +1,8 @@
 /********************************************************************************************************************************************************************************************
- * Objetivo: Arquivo responsável pelo CRUD no Banco de dados MySQL na tabela de relação entre diretor e filme.
- * Data: 29/05/2026
+ * Objetivo: Arquivo responsável pelo CRUD no Banco de dados MySQL na tabela de relação entre classificação e filme.
+ * Data: 03/06/2026
  * Autor: Lucas Dias Brandão Kolle
- * Versão: 1.0.05.26
+ * Versão: 1.0.06.26
  ********************************************************************************************************************************************************************************************/
 
 //importando a biblioteca para gerenciar o banco de dados no node.js
@@ -17,27 +17,27 @@ const knexConex = knex(knexConfig.development) //aciona o knex e passa as config
 /*INICIANDO CRUD DA TABELA DE DIRETOR_FILME (TABELA INTERMEDIÁRIA)*/
 
 //função para inserir 
-const insertDiretorFilme = async function(diretorFilme){
+const insertClassificacaoFilme = async function(classificacaoFilme){
 
     //try catch para segurar a API no ar mesmo com erros
     try {
         
         //criando a variável responsável por construir o script para enviar ao banco de dados
         let sql = 
-            `insert into tbl_diretor_filme (
-                id_diretor,
+            `insert into tbl_classificacao_filme (
+                id_classificacao,
                 id_filme
             )
             values (
-                ${diretorFilme.id_diretor},
-                ${diretorFilme.id_filme}
+                ${classificacaoFilme.id_classificacao},
+                ${classificacaoFilme.id_filme}
             );`
 
         //executa o script no banco de dados usando a nossa variável
         let result = await knexConex.raw(sql) //usa o knexConex para enviar o script
 
         if(result)
-            return result[0].insertId //retorna o ID do genero criado ao invés de retorna "true"
+            return result[0].insertId //retorna o ID do ator criado ao invés de retorna "true"
         else
             return false
         
@@ -47,16 +47,16 @@ const insertDiretorFilme = async function(diretorFilme){
 }
 
 //função para atualizar
-const updateDiretorFilme = async function(diretorFilme){
+const updateClassificacaoFilme = async function(classificacaoFilme){
 
     try {
 
         //criando variável sql
-        let sql =   `update tbl_diretor_filme set 
-                        id_genero = ${diretorFilme.id_diretor},
-                        id_filme = ${diretorFilme.id_filme}
+        let sql =   `update tbl_classificacao_filme set 
+                        id_classificacao = ${classificacaoFilme.id_classificacao},
+                        id_filme = ${classificacaoFilme.id_filme}
 
-                    where id = ${generoFilme.id};`
+                    where id = ${classificacaoFilme.id};`
 
         //enviando para o banco de dados 
         let result = await knexConex.raw(sql)
@@ -74,12 +74,12 @@ const updateDiretorFilme = async function(diretorFilme){
 }
 
 //função para retornar todos
-const selectAllDiretorFilme = async function(){
+const selectAllClassificacaoFilme = async function(){
 
     try {
 
         //criando variável sql para guardar o script
-        let sql = "select * from tbl_diretor_filme order by id desc;" //colocando em ordem decrescente para facilitar o entendimento
+        let sql = "select * from tbl_classificacao_filme order by id desc;" //colocando em ordem decrescente para facilitar o entendimento
 
         //executando no banco de dados
         let result = await knexConex.raw(sql) //usa o knexConex para enviar o script
@@ -100,12 +100,12 @@ const selectAllDiretorFilme = async function(){
 }
 
 //função para retornar um genero de acordo com o id
-const selectByIdDiretorFilme = async function(id){
+const selectByIdClassificacaoFilme = async function(id){
 
     try {
         
         //criando variável sql
-        let sql = `select * from tbl_diretor_filme where id = ${id}`
+        let sql = `select * from tbl_classificacao_filme where id = ${id}`
 
         //executando no banco de dados
         let result = await knexConex.raw(sql)
@@ -124,12 +124,12 @@ const selectByIdDiretorFilme = async function(id){
 }
 
 //função para deletar um filme pelo id
-const deleteDiretorFilme = async function(id){
+const deleteClassificacaoFilme = async function(id){
 
     try {
 
         //criando variável sql
-        let sql = `delete from tbl_diretor_filme where id = ${id};`
+        let sql = `delete from tbl_classificacao_filme where id = ${id};`
 
         console.log(sql)
 
@@ -151,18 +151,18 @@ const deleteDiretorFilme = async function(id){
 /* ATÉ AQUI FOI SÓ ALTERAÇÃO SIMPLES, DAQUI PRA BAIXO SÃO IMPLEMENTAÇÕES DIFERENTES */
 
 //função para retornar os filmes pelo id do diretor (filmes que o diretor participa)
-const selectFilmeByIdDiretor = async function(idDiretor){
+const selectFilmeByIClassificacao = async function(idClassificacao){
 
     try {
         
         //criando variável sql
         let sql = `select   tbl_filme.*
                         from tbl_filme
-                            inner join tbl_diretor_filme
-                                on tbl_filme.id = tbl_diretor_filme.id_filme
-                            inner join tbl_diretor
-                                on tbl_diretor.id = tbl_diretor_filme.id_diretor
-                    where tbl_diretor.id = ${idDiretor};`
+                            inner join tbl_classificacao_filme
+                                on tbl_filme.id = tbl_classificacao_filme.id_filme
+                            inner join tbl_classificacao
+                                on tbl_classificacao.id = tbl_classificacao_filme.id_classificacao
+                    where tbl_classificacao.id = ${idClassificacao};`
 
         //executando no banco de dados
         let result = await knexConex.raw(sql)
@@ -181,17 +181,17 @@ const selectFilmeByIdDiretor = async function(idDiretor){
 }
 
 //função para retornar os diretores pelo id do filme (diretores que participam do filme)
-const selectDiretorByIdFilme = async function(idFilme){
+const selectClassificacaoByIdFilme = async function(idFilme){
 
     try {
         
         //criando variável sql
-        let sql = `select   tbl_diretor.*
+        let sql = `select   tbl_classificacao.*
                         from tbl_filme
-                            inner join tbl_diretor_filme
-                                on tbl_filme.id = tbl_diretor_filme.id_filme
-                            inner join tbl_diretor
-                                on tbl_diretor.id = tbl_diretor_filme.id_diretor
+                            inner join tbl_classificacao_filme
+                                on tbl_filme.id = tbl_classificacao_filme.id_filme
+                            inner join tbl_classificacao
+                                on tbl_classificacao.id = tbl_classificacao_filme.id_classificacao
                     where tbl_filme.id = ${idFilme};`
 
         //executando no banco de dados
@@ -212,12 +212,12 @@ const selectDiretorByIdFilme = async function(idFilme){
 
 
 //função para excluir os diretores filtrando pelo id do filme, essa função será utilizada no update do filme, pois precisa apagar pra depois inserir os novos diretores relacionados a esse filme
-const deleteDiretoresByIdFilme = async function(idFilme){
+const deleteClassificacaoByIdFilme = async function(idFilme){
 
     try {
 
         //criando variável sql
-        let sql = `delete from tbl_diretor_filme where id_filme = ${idFilme};` //apagando pela chave estrangeira do filme, para apagar todos os diretores relacionados a esse filme
+        let sql = `delete from tbl_classificacao_filme where id_filme = ${idFilme};` //apagando pela chave estrangeira do filme, para apagar todos os diretores relacionados a esse filme
 
         console.log(sql)
 
@@ -239,12 +239,12 @@ const deleteDiretoresByIdFilme = async function(idFilme){
 
 //exportando arquivos
 module.exports = {
-    insertDiretorFilme,
-    updateDiretorFilme,
-    selectAllDiretorFilme,
-    selectByIdDiretorFilme,
-    deleteDiretorFilme,
-    selectFilmeByIdDiretor,
-    selectDiretorByIdFilme,
-    deleteDiretoresByIdFilme
+    insertClassificacaoFilme,
+    updateClassificacaoFilme,
+    selectAllClassificacaoFilme,
+    selectByIdClassificacaoFilme,
+    deleteClassificacaoFilme,
+    selectFilmeByIClassificacao,
+    selectClassificacaoByIdFilme,
+    deleteClassificacaoByIdFilme
 }

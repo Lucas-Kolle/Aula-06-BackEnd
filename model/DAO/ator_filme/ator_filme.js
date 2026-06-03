@@ -190,7 +190,7 @@ const selectAtorByIdFilme = async function(idFilme){
                         from tbl_filme
                             inner join tbl_ator_filme
                                 on tbl_filme.id = tbl_ator_filme.id_filme
-                            inner join tbl_genero
+                            inner join tbl_ator
                                 on tbl_ator.id = tbl_ator_filme.id_ator
                     where tbl_filme.id = ${idFilme};`
 
