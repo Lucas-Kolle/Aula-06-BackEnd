@@ -114,11 +114,8 @@ const atualizarAtorFilme = async function(atorFilme, id){
     }
 }
 
-/* PAREI AQUI !!!!!!!!!!!!!! */
-/* CONTINUAR DAQUI PRA BAIXO */
-
 //função para listar todos os generos
-const listarDiretorFilme = async function(){
+const listarAtorFilme = async function(){
 
     //importando arquivo de mensagens
     let message = JSON.parse(JSON.stringify(config_message)) //primeiro transforma em ele transformar em string para poder copiar, depois ele tranforma em json para ser utilizavel
@@ -126,7 +123,7 @@ const listarDiretorFilme = async function(){
     try {
 
         //chamando a função para enviar os dados
-        let result = await diretorFilmeDAO.selectAllDiretorFilme()
+        let result = await atorFilmeDAO.selectAllAtorFilme()
 
         //verificando retorno 
         if(result){
@@ -138,7 +135,7 @@ const listarDiretorFilme = async function(){
                 message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status // True or False
                 message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code // 200
                 message.DEFAULT_MESSAGE.response.count = result.length // Mostra a quantidade de itens
-                message.DEFAULT_MESSAGE.response.diretorFilme = result // Mostra os itens
+                message.DEFAULT_MESSAGE.response.atorFilme = result // Mostra os itens
 
                 return message.DEFAULT_MESSAGE // retorna as mensagens e os dados
 
@@ -158,7 +155,7 @@ const listarDiretorFilme = async function(){
 }
 
 //função para buscar um genero pelo id
-const buscarDiretorFilmeID = async function(id){
+const buscarAtorFilmeID = async function(id){
 
     //importando o arquivo de mensagens
     const message = JSON.parse(JSON.stringify(config_message))
@@ -175,7 +172,7 @@ const buscarDiretorFilmeID = async function(id){
         }else{ //se estiver tudo certo com o id ele continua o programa
 
             //enviando para o DAO
-            let result = await diretorFilmeDAO.selectFilmeByIdDiretor(id)
+            let result = await atorFilmeDAO.selectAtorByIdFilme(id)
 
             //vaidando retorno
             if(result){ //se tiver algo ele cai aqui
@@ -185,7 +182,7 @@ const buscarDiretorFilmeID = async function(id){
 
                     message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status //true / false
                     message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code //200
-                    message.DEFAULT_MESSAGE.response.diretorFilme = result //conteúdo
+                    message.DEFAULT_MESSAGE.response.atorFilme = result //conteúdo
 
                     return message.DEFAULT_MESSAGE //retornando dados
 
@@ -202,7 +199,7 @@ const buscarDiretorFilmeID = async function(id){
 }
 
 //função para excluir um genero pelo id
-const excluirDiretorFilme = async function(id){
+const excluirAtorFilme = async function(id){
     
     //importando arquivo de mensagem
     let message = JSON.parse(JSON.stringify(config_message))
@@ -210,13 +207,13 @@ const excluirDiretorFilme = async function(id){
     try {
         
         //enviando id para função "buscarGeneroId" para verificar existencia
-        let verificarId = await buscarDiretorFilmeID(id)
+        let verificarId = await buscarAtorFilmeID(id)
 
         //tratando retorno da função
         if(verificarId.status){
 
             //mandando para o DAO
-            let result = await diretorFilmeDAO.deleteDiretorFilme(id) 
+            let result = await atorFilmeDAO.deleteAtorFilme(id) 
 
             //tratando retornos
             if(result){
@@ -235,7 +232,7 @@ const excluirDiretorFilme = async function(id){
 }
 
 //função para fazer a validação dos dados recebidos (POST / PUT)
-const validarDados = function(diretorFilme){
+const validarDados = function(atorFilme){
 
     //clonando a variável de mensagens para não modificar a original
     let message = JSON.parse(JSON.stringify(config_message))
@@ -245,13 +242,13 @@ const validarDados = function(diretorFilme){
     try {
         
         //iniciando validação dos dados recebidos
-        if(diretorFilme.id_diretor == undefined /*undefined sempre deve vir primeiro*/ || diretorFilme.id_diretor == "" || diretorFilme.id_diretor == null || isNaN(diretorFilme.id_diretor)){
+        if(atorFilme.id_ator == undefined /*undefined sempre deve vir primeiro*/ || atorFilme.id_ator == "" || atorFilme.id_ator == null || isNaN(atorFilme.id_ator)){
 
             //personalizando mensagem de erro
             message.ERROR_BAD_REQUEST.field /*field = campo (local do erro)*/ = "O campo [ID_filme] está incorreto!"
             return message.ERROR_BAD_REQUEST
 
-        }else if(diretorFilme.id_filme == undefined /*undefined sempre deve vir primeiro*/ || diretorFilme.id_filme == "" || diretorFilme.id_filme == null || isNaN(diretorFilme.id_filme)){
+        }else if(atorFilme.id_filme == undefined /*undefined sempre deve vir primeiro*/ || atorFilme.id_filme == "" || atorFilme.id_filme == null || isNaN(atorFilme.id_filme)){
             //personalizando mensagem de erro
             message.ERROR_BAD_REQUEST.field /*field = campo (local do erro)*/ = "O campo [ID_filme] está incorreto!"
             return message.ERROR_BAD_REQUEST
@@ -269,7 +266,7 @@ const validarDados = function(diretorFilme){
 /* CONTEÚDOS NOVOS DAQUI PRA BAIXO */
 
 //função para retornar os filmes pelo id do genero (filmes relacionados a esse genero)
-const buscarFilmeIdDiretor = async function(idDiretor){
+const buscarFilmeIdAtor = async function(idAtor){
 
     //importando o arquivo de mensagens
     const message = JSON.parse(JSON.stringify(config_message))
@@ -277,16 +274,16 @@ const buscarFilmeIdDiretor = async function(idDiretor){
     try {
         
         //validando id
-        if(idDiretor == undefined || idDiretor == "" || idDiretor == null || isNaN(idDiretor)){ //se o id estiver erra ele vai entrar aqui
+        if(idAtor == undefined || idAtor == "" || idAtor == null || isNaN(idAtor)){ //se o id estiver erra ele vai entrar aqui
 
             //personalizando mensagem
-            message.ERROR_BAD_REQUEST.field = "O campo [idDiretor] está incorreto!"
+            message.ERROR_BAD_REQUEST.field = "O campo [idAtor] está incorreto!"
             return message.ERROR_BAD_REQUEST //400 (requisição incorreta)
 
         }else{ //se estiver tudo certo com o id ele continua o programa
 
             //enviando para o DAO
-            let result = await diretorFilmeDAO.selectFilmeByIdDiretor(idDiretor)
+            let result = await atorFilmeDAO.selectFilmeByIdAtor(idAtor)
 
             //vaidando retorno
             if(result){ //se tiver algo ele cai aqui
@@ -296,7 +293,7 @@ const buscarFilmeIdDiretor = async function(idDiretor){
 
                     message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status //true / false
                     message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code //200
-                    message.DEFAULT_MESSAGE.response.diretorFilme = result //conteúdo
+                    message.DEFAULT_MESSAGE.response.atorFilme = result //conteúdo
 
                     return message.DEFAULT_MESSAGE //retornando dados
 
@@ -313,7 +310,7 @@ const buscarFilmeIdDiretor = async function(idDiretor){
 }
 
 //função para retornar os generos pelo id do filme (generos relacionados a esse filme)
-const buscarDiretorIdFilme = async function(idFilme){
+const buscarAtorIdFilme = async function(idFilme){
 
     //importando o arquivo de mensagens
     const message = JSON.parse(JSON.stringify(config_message))
@@ -324,13 +321,13 @@ const buscarDiretorIdFilme = async function(idFilme){
         if(idFilme == undefined || idFilme == "" || idFilme == null || isNaN(idFilme)){ //se o id estiver erra ele vai entrar aqui
 
             //personalizando mensagem
-            message.ERROR_BAD_REQUEST.field = "O campo [ID_GENERO] está incorreto!"
+            message.ERROR_BAD_REQUEST.field = "O campo [ID_FILME] está incorreto!"
             return message.ERROR_BAD_REQUEST //400 (requisição incorreta)
 
         }else{ //se estiver tudo certo com o id ele continua o programa
 
             //enviando para o DAO
-            let result = await diretorFilmeDAO.selectDiretorByIdFilme(idFilme)
+            let result = await atorFilmeDAO.selectAtorByIdFilme(idFilme)
 
             //vaidando retorno
             if(result){ //se tiver algo ele cai aqui
@@ -340,7 +337,7 @@ const buscarDiretorIdFilme = async function(idFilme){
 
                     message.DEFAULT_MESSAGE.status = message.SUCESS_RESPONSE.status //true / false
                     message.DEFAULT_MESSAGE.status_code = message.SUCESS_RESPONSE.status_code //200
-                    message.DEFAULT_MESSAGE.response.diretorFilme = result //conteúdo
+                    message.DEFAULT_MESSAGE.response.atorFilme = result //conteúdo
 
                     return message.DEFAULT_MESSAGE //retornando dados
 
@@ -357,7 +354,7 @@ const buscarDiretorIdFilme = async function(idFilme){
 }
 
 //função para excluir os generos relacionados com o filme, mesma do DAO (exclui pra depois adiconar os novos generos)
-const excluirGenerosIdFilme = async function(idFilme){
+const excluirAtoresIdFilme = async function(idFilme){
     
     //importando arquivo de mensagem
     let message = JSON.parse(JSON.stringify(config_message))
@@ -365,7 +362,7 @@ const excluirGenerosIdFilme = async function(idFilme){
     try {
         
         //mandando para o DAO
-        let result = await diretorFilmeDAO.deleteDiretoresByIdFilme(idFilme) //manda o id do filme para a função de excluir os generos relacionados a esse filme
+        let result = await atorFilmeDAO.deleteAtoresByIdFilme(idFilme) //manda o id do filme para a função de excluir os generos relacionados a esse filme
 
         //tratando retornos
         if(result){
@@ -381,12 +378,12 @@ const excluirGenerosIdFilme = async function(idFilme){
 
 //exportando arquivos
 module.exports = {
-    inserirNovoDiretorFilme,
-    atualizarDiretorFilme,
-    listarDiretorFilme,
-    buscarDiretorFilmeID,
-    excluirDiretorFilme,
-    buscarFilmeIdDiretor,
-    buscarDiretorIdFilme,
-    excluirGenerosIdFilme
+    inserirNovoAtorFilme,
+    atualizarAtorFilme,
+    listarAtorFilme,
+    buscarAtorFilmeID,
+    excluirAtorFilme,
+    buscarFilmeIdAtor,
+    buscarAtorIdFilme,
+    excluirAtoresIdFilme
 }
