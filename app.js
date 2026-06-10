@@ -23,10 +23,8 @@ const bodyParser    = require("body-parser")
 
 //import das controllers do projeto
 const controllerFilme           = require("./controller/filme/controller_filme.js")
-const controllerGenero          = require("./controller/genero/controller_genero.js")
 const controllerDiretor         = require("./controller/diretor/controller_diretor.js")
 const controllerAtor            = require("./controller/ator/controller_ator.js")
-const controllerClassificacao   = require("./controller/classificacao/controller_classificacao.js")
 
 //criando um objeto para manipular dados do body da API em formato Json
 const bodyParserJSON = bodyParser.json()
@@ -43,6 +41,7 @@ const corsOption = {
 
 //configurando as permissões da API atravez do CORS
 app.use(cors(corsOption))
+
 
 
 
@@ -121,80 +120,25 @@ app.delete('/v1/senai/locadora/filme/:id', async function (request, response){
 })
 
 
+/* SESSÃO DE GENERO */
 
-/* CRUD DE GENERO */
+//importando o arquivo onde estão as rotas da tabela de genero
+const generoRouter = require("./routes/genero.routes.js")
 
-//cadastrar novo genero
-app.post("/v1/senai/locadora/genero", bodyParserJSON /*serve para captar o conteúdo enviado na requisição e colocar*/, async function(request, response){
-    
-    //recebendo dados da requisição
-    let dados = request.body
+//definindo a rota para acessar as rotas do generoRouter (o cors() é para liberar o acesso a essa rota, caso contrário, o navegador bloqueia por questões de segurança)
+app.use("/v1/senai/locadora/genero", cors(), generoRouter)
 
-    //verificando content-type
-    let contentType = request.headers["content-type"]
 
-    //enviando para a controller
-    let result = await controllerGenero.inserirNovoGenero(dados, contentType)
 
-    //enviando resposta da requisição
-    response.status(result.status_code)
-    response.json(result)
-})
 
-//listar todos os dados do genero
-app.get("/v1/senai/locadora/genero", async function(request, response){
+/* SESSÃO DE CLASSIFICACAO */
 
-    //pede os dados e aguarda a resposta
-    let result = await controllerGenero.listarGeneros()
+//importando o arquivo onde estão as rotas da tabela de genero
+const classificacaoRouter = require("./routes/classificacao.routes.js")
 
-    //envia os dados recebidos
-    response.status(result.status_code)
-    response.json(result)
-})
+//definindo a rota para acessar as rotas do generoRouter (o cors() é para liberar o acesso a essa rota, caso contrário, o navegador bloqueia por questões de segurança)
+app.use("/v1/senai/locadora/classificacao", cors(), classificacaoRouter)
 
-//buscar genero pelo id
-app.get("/v1/senai/locadora/genero/:id", async function(request, response){
-
-    //recebendo id
-    let id = request.params.id
-
-    //chamando função da controller e enviando o id
-    let result = await controllerGenero.buscarGeneroID(id)
-
-    //enviando resposta
-    response.status(result.status_code)
-    response.json(result)
-})
-
-//atualizar gênero
-app.put("/v1/senai/locadora/genero/:id", bodyParserJSON, async function(request, response){
-
-    //recebendo o id e o conteúdo para serem enviados
-    let id = request.params.id
-    let genero = request.body
-    let contentType = request.headers['content-type']
-
-    //enviando os dados para controller
-    let result = await controllerGenero.atualizarGenero(genero, contentType, id)
-
-    //enviando para o usuário
-    response.status(result.status_code)
-    response.json(result)
-})
-
-//deletar genero
-app.delete("/v1/senai/locadora/genero/:id", async function(request, response){
-
-    //recebendo o id
-    let id = request.params.id
-
-    //enviando id para realizar o delete
-    let result = await controllerGenero.excluirGenero(id)
-
-    //devolvendo mensagem e status-code
-    response.status(result.status_code)
-    response.json(result)
-})
 
 
 
@@ -277,6 +221,7 @@ app.delete("/v1/senai/locadora/diretor/:id", async function(request, response){
 
 
 
+
 /* CRUD DA TABELA DE ATOR */
 
 //adicionar novo diretor
@@ -348,85 +293,6 @@ app.delete("/v1/senai/locadora/ator/:id", async function(request, response){
 
         //enviando id para realizar o delete
         let result = await controllerAtor.excluirAtor(idAtor)
-    
-        //devolvendo mensagem e status-code
-        response.status(result.status_code)
-        response.json(result)
-})
-
-
-
-/* CRUD DA TABELA DE CLASSIFICACAO */
-
-//adicionar novo classificacao
-app.post("/v1/senai/locadora/classificacao", bodyParserJSON, async function(request, response){
-
-    //recebendo dados 
-    let dadosClassificacao = request.body
-
-    //pegando o content-type
-    let contentType = request.headers['content-type']
-
-    //enviando para a controller
-    let result = await controllerClassificacao.inserirNovaClassificacao(contentType, dadosClassificacao)
-
-    //enviando resposta
-    response.status(result.status_code)
-    response.json(result)
-
-})
-
-//listar todos os classificacao
-app.get("/v1/senai/locadora/classificacao", async function(request, response){
-
-    //fazendo requisição
-    let result = await controllerClassificacao.listarClassificacao()
-
-    //enviando resposta
-    response.status(result.status_code)
-    response.json(result)
-
-})
-
-//buscasr um classificacao específico
-app.get("/v1/senai/locadora/classificacao/:id", async function(request, response){
-
-    //recebendo o id
-    let idClassificacao = request.params.id
-
-    //enviando para o banco
-    let result = await controllerClassificacao.buscarClassificacaoId(idClassificacao)
-
-    //enviando resposta
-    response.status(result.status_code)
-    response.json(result)
-})
-
-//atualizar classificacao
-app.put("/v1/senai/locadora/classificacao/:id", bodyParserJSON, async function(request, response){
-
-        //recebendo o id e o conteúdo para serem enviados
-        let idClassificacao = request.params.id
-        let dadosClassificacao = request.body
-        let contentType = request.headers['content-type']
-    
-        //enviando os dados para controller
-        let result = await controllerClassificacao.atualizarClassificacao(idClassificacao, contentType, dadosClassificacao)
-    
-        //enviando para o usuário
-        response.status(result.status_code)
-        response.json(result)
-    
-})
-
-//deletar classificacao
-app.delete("/v1/senai/locadora/classificacao/:id", async function(request, response){
-    
-        //recebendo o id
-        let idClassificacao = request.params.id
-
-        //enviando id para realizar o delete
-        let result = await controllerClassificacao.excluirClassificacao(idClassificacao)
     
         //devolvendo mensagem e status-code
         response.status(result.status_code)
